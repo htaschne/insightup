@@ -6,12 +6,14 @@
 //
 
 import UIKit
+import DesignSystem
+import SwiftUICore
 
 class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        view.backgroundColor = UIColor(Color.DesignSystem.gray6Dark)
     }
 
 
