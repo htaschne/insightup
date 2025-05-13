@@ -5,7 +5,6 @@
 //  Created by Agatha Schneider on 12/05/25.
 //
 
-import DesignSystem
 import UIKit
 
 class HomeViewController: UIViewController {
@@ -36,6 +35,15 @@ class HomeViewController: UIViewController {
         return tableView
     }()
 
+    lazy var homeView: HomeScreenView = {
+        var homeView = HomeScreenView()
+        homeView.translatesAutoresizingMaskIntoConstraints = false
+        homeView.isHidden = false
+        homeView.insetsLayoutMarginsFromSafeArea = true // TODO(Agatha): is this necessary?
+        homeView.backgroundColor = UIColor(named: "BackgroundsSecondary")
+        return homeView
+    }()
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -48,9 +56,8 @@ class HomeViewController: UIViewController {
         view.addGestureRecognizer(tapGesture)
 
         // appearence setup
-        view.backgroundColor = .white
-        
-        
+        view.backgroundColor = UIColor(named: "BackgroundsPrimary")
+
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.title = "InsightUp"
         navigationItem.searchController = searchController
@@ -69,19 +76,25 @@ class HomeViewController: UIViewController {
 extension HomeViewController: ViewCodeProtocol {
     func addSubviews() {
         [
-            tableView
+            tableView,
+            homeView,
+
         ].forEach(view.addSubview)
     }
 
     func addConstraints() {
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(
-                equalTo: view.safeAreaLayoutGuide.topAnchor,
-                constant: 8
-            ),
+            homeView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            homeView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            homeView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            homeView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+//            homeView.heightAnchor.constraint(equalToConstant: 200),
+
+
+            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
 }
@@ -123,6 +136,7 @@ extension HomeViewController: UISearchBarDelegate {
 
 extension HomeViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
+        // TODO(Agatha): update
     }
 
 }
