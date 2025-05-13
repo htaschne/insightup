@@ -6,9 +6,28 @@
 //
 
 import Foundation
+import UIKit
 
 enum InsightCategory: String, Codable, CaseIterable {
     case Ideas, Problems, Feelings, Observations
+    
+    var imageName: String {
+        [
+            .Ideas: "lightbulb.fill",
+            .Problems: "exclamationmark.bubble.fill",
+            .Feelings: "heart.fill",
+            .Observations: "eye.fill",
+        ][self, default: "ellipsis"]
+    }
+    
+    var color: UIColor {
+        [
+            .Ideas: UIColor(named: "ColorsYellow")!,
+            .Problems: UIColor(named: "ColorsRed")!,
+            .Feelings: UIColor(named: "ColorsBlue")!,
+            .Observations: UIColor(named: "ColorsGreen")!,
+        ][self, default: .gray]
+    }
 }
 
 enum Category: String, Codable {
