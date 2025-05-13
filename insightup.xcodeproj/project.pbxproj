@@ -6,10 +6,6 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXBuildFile section */
-		21E45A112DD2A2A3002708A1 /* DesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 21E45A102DD2A2A3002708A1 /* DesignSystem */; };
-/* End PBXBuildFile section */
-
 /* Begin PBXContainerItemProxy section */
 		21E459EF2DD29F21002708A1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -31,7 +27,6 @@
 		21E459D82DD29F20002708A1 /* insightup.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = insightup.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		21E459EE2DD29F21002708A1 /* insightupTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = insightupTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		21E459F82DD29F21002708A1 /* insightupUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = insightupUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		21E45A0E2DD2A268002708A1 /* DesignSystem */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = DesignSystem; path = /Users/htaschne/Downloads/DesignSystem; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -70,7 +65,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				21E45A112DD2A2A3002708A1 /* DesignSystem in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -94,7 +88,6 @@
 		21E459CF2DD29F20002708A1 = {
 			isa = PBXGroup;
 			children = (
-				21E45A0E2DD2A268002708A1 /* DesignSystem */,
 				21E459DA2DD29F20002708A1 /* insightup */,
 				21E459F12DD29F21002708A1 /* insightupTests */,
 				21E459FB2DD29F21002708A1 /* insightupUITests */,
@@ -140,7 +133,6 @@
 			);
 			name = insightup;
 			packageProductDependencies = (
-				21E45A102DD2A2A3002708A1 /* DesignSystem */,
 			);
 			productName = insightup;
 			productReference = 21E459D82DD29F20002708A1 /* insightup.app */;
@@ -583,13 +575,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		21E45A102DD2A2A3002708A1 /* DesignSystem */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = DesignSystem;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 21E459D02DD29F20002708A1 /* Project object */;
 }

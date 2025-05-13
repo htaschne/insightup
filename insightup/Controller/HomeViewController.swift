@@ -49,24 +49,16 @@ class HomeViewController: UIViewController {
 
         // appearence setup
         view.backgroundColor = .white
-        if let navigationBar = navigationController?.navigationBar {
-            let appearance = UINavigationBarAppearance()
-            appearance.configureWithTransparentBackground()
-            appearance.backgroundColor = .white  // match your desired nav bar color
-            appearance.shadowColor = .clear  // this removes the line
-
-            navigationBar.standardAppearance = appearance
-            navigationBar.scrollEdgeAppearance = appearance
-            navigationBar.prefersLargeTitles = true
-        }
+        
+        
+        navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.title = "InsightUp"
+        navigationItem.searchController = searchController
 
         // search bar setup
         // TODO(Agatha): make this initialization better
         insights = InsightPersistence.getAll().insights
         filteredInsights = insights
-        //        searchBar.delegate = self
-        navigationItem.searchController = searchController
 
         // view setup
         setup()
