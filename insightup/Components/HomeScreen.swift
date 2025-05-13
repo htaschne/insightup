@@ -11,19 +11,17 @@ class HomeScreenView: UIView {
 
     lazy var ideasButton: UIButton = {
         var button = UIButton()
-        
-    
+        return button
     }()
-    
+
 }
 
 extension HomeScreenView: ViewCodeProtocol {
     func addSubviews() {
     }
-    
+
     func addConstraints() {
-        
+
     }
-    
-    
+
 }
