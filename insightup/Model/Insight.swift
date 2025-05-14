@@ -23,8 +23,8 @@ enum InsightCategory: String, Codable, CaseIterable {
     var color: UIColor {
         [
             .Ideas: UIColor(named: "ColorsYellow")!,
-            .Problems: UIColor(named: "ColorsRed")!,
-            .Feelings: UIColor(named: "ColorsBlue")!,
+            .Feelings: UIColor(named: "ColorsRed")!,
+            .Problems: UIColor(named: "ColorsBlue")!,
             .Observations: UIColor(named: "ColorsGreen")!,
         ][self, default: .gray]
     }
