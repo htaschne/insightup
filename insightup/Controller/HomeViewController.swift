@@ -41,6 +41,7 @@ class HomeViewController: UIViewController {
         homeView.translatesAutoresizingMaskIntoConstraints = false
         homeView.isHidden = false
         homeView.backgroundColor = UIColor(named: "BackgroundsSecondary")
+        homeView.addInsightButton.addTarget(self, action: #selector(modalButtonTapped), for: .touchUpInside)
         return homeView
     }()
     
@@ -76,6 +77,21 @@ class HomeViewController: UIViewController {
 
         // view setup
         setup()
+    }
+    
+    @objc func modalButtonTapped() {
+        
+        let modalVC = ModalAddInsightViewController()
+        modalVC.modalPresentationStyle = .automatic
+        
+//        modalVC.onDone = { [weak self] in
+//            guard let self = self else { return }
+//            self.database = Persistence.getDataBase()
+//            tableView.reloadData()
+//        }
+
+        present(modalVC, animated: true)
+
     }
 
 }
