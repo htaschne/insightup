@@ -20,7 +20,7 @@ class EmptyState: UIView {
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .systemFont(ofSize: 24, weight: .medium)
+        label.font = .systemFont(ofSize: 24, weight: .semibold)
         label.textColor = .graysGray
         label.textAlignment = .center
         return label
@@ -40,7 +40,8 @@ class EmptyState: UIView {
         let stackView = UIStackView(arrangedSubviews: [titleLabel, subtitleLabel])
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
-        stackView.distribution = .fillEqually
+        stackView.distribution = .equalCentering
+        stackView.spacing = 8
         return stackView
     }()
     
@@ -81,8 +82,8 @@ extension EmptyState: ViewCodeProtocol {
             imageView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -20),
             
             stackView.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 8),
-            stackView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20),
-            stackView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -20),
+            stackView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 10),
+            stackView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -10),
         ])
     }
     

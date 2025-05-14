@@ -39,11 +39,20 @@ class ObservationsViewController: UIViewController {
     private lazy var addInsightButton: UIButton = {
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Add insight", for: .normal)
-        button.setTitleColor(.white, for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 17, weight: .medium)
+        
+        var config = UIButton.Configuration.filled()
+        config.title = "Add Insight"
+        config.image = UIImage(systemName: "plus")
+        config.imagePlacement = .leading
+        config.imagePadding = 4
+        config.contentInsets = .init(top: 14, leading: 16, bottom: 14, trailing: 16)
+        config.baseBackgroundColor = .colorsBlue
+        config.baseForegroundColor = .white
+        config.cornerStyle = .medium
+        
+        button.configuration = config
+        
         button.layer.cornerRadius = 8
-        button.backgroundColor = .colorsBlue
         return button
     }()
     
@@ -55,6 +64,13 @@ class ObservationsViewController: UIViewController {
         return empty
     }()
     
+    private lazy var filterButton: UIBarButtonItem = {
+        UIBarButtonItem(image: UIImage(systemName: "line.3.horizontal.decrease"),
+                        style: .plain,
+                        target: self,
+                        action: #selector(handleFilter))
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
@@ -64,6 +80,7 @@ class ObservationsViewController: UIViewController {
         navigationItem.title = "Observations"
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
+        navigationItem.rightBarButtonItem = filterButton
 
         filteredInsights = insights
         updateEmptyStateVisibility()
@@ -84,6 +101,11 @@ class ObservationsViewController: UIViewController {
         navigationItem.standardAppearance = appearance
         navigationItem.compactAppearance = appearance
         navigationItem.scrollEdgeAppearance = appearance
+    }
+    
+    @objc private func handleFilter() {
+        print("Filter pressed")
+        // TODO
     }
     
     private func updateEmptyStateVisibility() {
