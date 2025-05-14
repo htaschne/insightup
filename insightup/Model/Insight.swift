@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 enum InsightCategory: String, Codable, CaseIterable {
-    case Ideas, Problems, Feelings, Observations
+    case Ideas, Problems, Feelings, Observations, All
     
     var imageName: String {
         [

@@ -16,23 +16,43 @@ class HomeScreenView: UIView {
         self.navigationController = navigationController
         setup()
     }
-
-    lazy var ideasButton: UIButton = {
-        var button = UIButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.layer.cornerRadius = 10
-        button.backgroundColor = .systemYellow
-        button.setTitle("Ideas", for: .normal)
-        return button
+    
+    lazy var ideasButton: CardCategoryComponent = {
+        let card = CardCategoryComponent(category: .Ideas)
+        card.translatesAutoresizingMaskIntoConstraints = false
+        return card
     }()
 
-    lazy var problemsButton: UIButton = {
-        var button = UIButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.layer.cornerRadius = 10
-        button.backgroundColor = .systemBlue
-        button.setTitle("Problems", for: .normal)
-        return button
+    lazy var problemsButton: CardCategoryComponent = {
+        var card = CardCategoryComponent(category: .Problems)
+        card.translatesAutoresizingMaskIntoConstraints = false
+        return card
+    }()
+
+    lazy var feelingsButton: CardCategoryComponent = {
+        var card = CardCategoryComponent(category: .Feelings)
+        card.translatesAutoresizingMaskIntoConstraints = false
+        return card
+    }()
+    
+    @objc func handleObservationButton() {
+        let vc = ObservationsViewController()
+        guard let navigationController else { fatalError("Could not unwrap navigationController") }
+        navigationController.pushViewController(vc, animated: true)
+    }
+    
+    lazy var observationsButton: CardCategoryComponent = {
+        var card = CardCategoryComponent(category: .Observations)
+        let tap = UITapGestureRecognizer(target: self, action: #selector(handleObservationButton))
+        card.translatesAutoresizingMaskIntoConstraints = false
+        card.addGestureRecognizer(tap)
+        return card
+    }()
+
+    lazy var allButton: CardCategoryComponent = {
+        var card = CardCategoryComponent(category: .All)
+        card.translatesAutoresizingMaskIntoConstraints = false
+        return card
     }()
 
     lazy var topButtonsStackView: UIStackView = {
@@ -46,33 +66,6 @@ class HomeScreenView: UIView {
         return stackView
     }()
 
-    lazy var feelingsButton: UIButton = {
-        var button = UIButton()
-        button.backgroundColor = .systemRed
-        button.layer.cornerRadius = 10
-        button.setTitle("Feelings", for: .normal)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-
-    @objc func handleObservationButton() {
-        let vc = ObservationsViewController()
-        guard let navigationController else { fatalError("Could not unwrap navigationController") }
-        navigationController.pushViewController(vc, animated: true)
-    }
-
-    lazy var observationsButton: UIButton = {
-        var button = UIButton()
-        button.backgroundColor = .systemGreen
-        button.layer.cornerRadius = 10
-        button.setTitle("Observations", for: .normal)
-        button.addTarget(
-            self,
-            action: #selector(handleObservationButton),
-            for: .touchUpInside
-        )
-        return button
-    }()
 
     lazy var bottomButtonsStackView: UIStackView = {
         var stackView = UIStackView(arrangedSubviews: [
@@ -83,15 +76,6 @@ class HomeScreenView: UIView {
         stackView.distribution = .fillEqually
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
-    }()
-
-    lazy var allButton: UIButton = {
-        var button = UIButton()
-        button.backgroundColor = .systemGray
-        button.layer.cornerRadius = 10
-        button.setTitle("All", for: .normal)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
     }()
 
     lazy var buttons: UIStackView = {
@@ -148,6 +132,12 @@ extension HomeScreenView: ViewCodeProtocol {
     }
 
     func addConstraints() {
+        ideasButton.heightAnchor.constraint(equalToConstant: 100).isActive = true
+        problemsButton.heightAnchor.constraint(equalToConstant: 100).isActive = true
+        feelingsButton.heightAnchor.constraint(equalToConstant: 100).isActive = true
+        observationsButton.heightAnchor.constraint(equalToConstant: 100).isActive = true
+        allButton.heightAnchor.constraint(equalToConstant: 100).isActive = true
+
         NSLayoutConstraint.activate([
             buttons.topAnchor.constraint(equalTo: topAnchor, constant: 16),
             buttons.leadingAnchor.constraint(

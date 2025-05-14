@@ -37,15 +37,12 @@ class HomeViewController: UIViewController {
 
     lazy var homeView: HomeScreenView = {
         guard let navigationController else { fatalError("Navigation controller not set") }
-
         var homeView = HomeScreenView(navigationController: navigationController)
         homeView.translatesAutoresizingMaskIntoConstraints = false
         homeView.isHidden = false
-//        homeView.insetsLayoutMarginsFromSafeArea = true // TODO(Agatha): is this necessary?
         homeView.backgroundColor = UIColor(named: "BackgroundsSecondary")
         return homeView
     }()
-
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)

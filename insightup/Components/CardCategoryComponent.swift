@@ -8,108 +8,117 @@
 import UIKit
 
 class CardCategoryComponent: UIView {
-    
-    lazy var icon: UIImageView = {
-        
-        var imageView = UIImageView(image: UIImage(named: "Ideas"))
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        
-        imageView.contentMode = .scaleAspectFit
-        imageView.layer.cornerRadius = 17
-        imageView.clipsToBounds = true
-        
-        imageView.setContentHuggingPriority(UILayoutPriority(800), for: .horizontal)
-        
-        return imageView
-    }()
-    
-    var iconImage: UIImage? {
-        didSet {
-            icon.image = iconImage
-        }
-    }
-    
-    lazy var counter: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.textColor = UIColor(named: "Label-Primary")
-        label.font = .systemFont(ofSize: 24, weight: .semibold)
-        label.textAlignment = .right
-        label.text = "1"
-        return label
-    }()
-    
+
+    private let iconBackgroundView = UIView()
+    private let icon = UIImageView()
+    private let counter = UILabel()
+    private let title = UILabel()
+    private let iconCounterStack = UIStackView()
+    private let fullStack = UIStackView()
+
     var counterValue: String? {
         didSet {
             counter.text = counterValue
         }
     }
-    
-    lazy var iconCounterStack: UIStackView = {
-        let stack = UIStackView(arrangedSubviews: [icon, counter])
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        stack.axis = .horizontal
-        stack.distribution = .fill
-        stack.spacing = 8
-        return stack
-    }()
-    
-    lazy var title: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.textColor = UIColor(named: "GraysGray")
-        label.font = .systemFont(ofSize: 17, weight: .semibold)
-        label.textAlignment = .left
-        label.text = "Ideas"
-        return label
-    }()
-    
-    var componentTitle: String? {
-        didSet {
-            title.text = componentTitle
-        }
-    }
-    
-    lazy var fullStack: UIStackView = {
-        let stack = UIStackView(arrangedSubviews: [iconCounterStack, title])
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        stack.axis = .vertical
-        stack.distribution = .fillProportionally
-        stack.spacing = 11
-        return stack
-    }()
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        self.backgroundColor = UIColor(named: "Background-Tertiary")
-        self.layer.cornerRadius = 12
+    init(category: InsightCategory) {
+        super.init(frame: .zero)
+        setupViews()
+        configure(with: category)
         setup()
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
+    private func setupViews() {
+        // Icon background circle
+        iconBackgroundView.translatesAutoresizingMaskIntoConstraints = false
+        iconBackgroundView.layer.cornerRadius = 17
+        iconBackgroundView.clipsToBounds = true
+        iconBackgroundView.widthAnchor.constraint(equalToConstant: 34)
+            .isActive = true
+        iconBackgroundView.heightAnchor.constraint(equalToConstant: 34)
+            .isActive = true
+
+        // Icon
+        icon.translatesAutoresizingMaskIntoConstraints = false
+        icon.contentMode = .scaleAspectFit
+        icon.tintColor = .white
+        icon.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        iconBackgroundView.addSubview(icon)
+
+        NSLayoutConstraint.activate([
+            icon.centerXAnchor.constraint(
+                equalTo: iconBackgroundView.centerXAnchor
+            ),
+            icon.centerYAnchor.constraint(
+                equalTo: iconBackgroundView.centerYAnchor
+            ),
+            icon.widthAnchor.constraint(equalToConstant: 20),
+            icon.heightAnchor.constraint(equalToConstant: 20),
+        ])
+
+        // Counter
+        counter.translatesAutoresizingMaskIntoConstraints = false
+        counter.font = .systemFont(ofSize: 24, weight: .semibold)
+        counter.textColor = .label
+        counter.textAlignment = .right
+        counter.text = "1"
+
+        // Top stack: icon + counter
+        iconCounterStack.axis = .horizontal
+        iconCounterStack.spacing = 8
+        iconCounterStack.translatesAutoresizingMaskIntoConstraints = false
+        iconCounterStack.addArrangedSubview(iconBackgroundView)
+        iconCounterStack.addArrangedSubview(counter)
+
+        // Title
+        title.translatesAutoresizingMaskIntoConstraints = false
+        title.font = .systemFont(ofSize: 17, weight: .semibold)
+        title.textColor = UIColor(named: "GraysGray") ?? .gray
+        title.textAlignment = .left
+
+        // Full stack
+        fullStack.axis = .vertical
+        fullStack.spacing = 11
+        fullStack.translatesAutoresizingMaskIntoConstraints = false
+        fullStack.addArrangedSubview(iconCounterStack)
+        fullStack.addArrangedSubview(title)
+
+        backgroundColor = UIColor(named: "BackgroundsPrimary") ?? .red
+        layer.cornerRadius = 12
+    }
+
+    private func configure(with category: InsightCategory) {
+        icon.image = UIImage(systemName: category.imageName)
+        iconBackgroundView.backgroundColor = category.color
+        title.text = category.rawValue
+    }
 }
 
 extension CardCategoryComponent: ViewCodeProtocol {
-    
     func addSubviews() {
         addSubview(fullStack)
     }
-    
+
     func addConstraints() {
         NSLayoutConstraint.activate([
-            
-            fullStack.topAnchor.constraint(equalTo: self.topAnchor, constant: 10),
-            fullStack.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -10),
-            fullStack.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 16),
-            fullStack.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -16),
-//            fullStack.heightAnchor.constraint(equalToConstant: 44),
-            
-            icon.widthAnchor.constraint(equalToConstant: 34),
-            icon.heightAnchor.constraint(equalToConstant: 34),
-            
+            fullStack.topAnchor.constraint(equalTo: topAnchor, constant: 10),
+            fullStack.bottomAnchor.constraint(
+                equalTo: bottomAnchor,
+                constant: -10
+            ),
+            fullStack.leadingAnchor.constraint(
+                equalTo: leadingAnchor,
+                constant: 16
+            ),
+            fullStack.trailingAnchor.constraint(
+                equalTo: trailingAnchor,
+                constant: -16
+            ),
         ])
     }
 }
