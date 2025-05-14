@@ -61,3 +61,9 @@ struct Insight: Codable {
 struct Insights: Codable {
     var insights: [Insight]
 }
+
+struct PropertyItem {
+    let title: String
+    let iconName: String
+    let options: [String]
+}
