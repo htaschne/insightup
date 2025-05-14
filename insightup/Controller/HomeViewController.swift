@@ -36,14 +36,24 @@ class HomeViewController: UIViewController {
     }()
 
     lazy var homeView: HomeScreenView = {
-        var homeView = HomeScreenView()
+        guard let navigationController else { fatalError("Navigation controller not set") }
+
+        var homeView = HomeScreenView(navigationController: navigationController)
         homeView.translatesAutoresizingMaskIntoConstraints = false
         homeView.isHidden = false
-        homeView.insetsLayoutMarginsFromSafeArea = true // TODO(Agatha): is this necessary?
+//        homeView.insetsLayoutMarginsFromSafeArea = true // TODO(Agatha): is this necessary?
         homeView.backgroundColor = UIColor(named: "BackgroundsSecondary")
         return homeView
     }()
 
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.searchController = searchController
+        navigationItem.hidesSearchBarWhenScrolling = false
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -60,6 +70,7 @@ class HomeViewController: UIViewController {
 
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.title = "InsightUp"
+        navigationItem.backButtonTitle = ""
         navigationItem.searchController = searchController
 
         // search bar setup
@@ -87,9 +98,7 @@ extension HomeViewController: ViewCodeProtocol {
             homeView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             homeView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             homeView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            homeView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-//            homeView.heightAnchor.constraint(equalToConstant: 200),
-
+            homeView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
 
             tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),

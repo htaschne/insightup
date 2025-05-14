@@ -9,6 +9,14 @@ import UIKit
 
 class HomeScreenView: UIView {
 
+    var navigationController: UINavigationController?
+
+    init(navigationController: UINavigationController) {
+        super.init(frame: .zero)
+        self.navigationController = navigationController
+        setup()
+    }
+
     lazy var ideasButton: UIButton = {
         var button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -47,11 +55,22 @@ class HomeScreenView: UIView {
         return button
     }()
 
+    @objc func handleObservationButton() {
+        let vc = ObservationsViewController()
+        guard let navigationController else { fatalError("Could not unwrap navigationController") }
+        navigationController.pushViewController(vc, animated: true)
+    }
+
     lazy var observationsButton: UIButton = {
         var button = UIButton()
         button.backgroundColor = .systemGreen
         button.layer.cornerRadius = 10
         button.setTitle("Observations", for: .normal)
+        button.addTarget(
+            self,
+            action: #selector(handleObservationButton),
+            for: .touchUpInside
+        )
         return button
     }()
 
@@ -65,21 +84,21 @@ class HomeScreenView: UIView {
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
-    
+
     lazy var allButton: UIButton = {
-       var button = UIButton()
+        var button = UIButton()
         button.backgroundColor = .systemGray
         button.layer.cornerRadius = 10
         button.setTitle("All", for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
-    
+
     lazy var buttons: UIStackView = {
         var stackView = UIStackView(arrangedSubviews: [
             topButtonsStackView,
             bottomButtonsStackView,
-            allButton
+            allButton,
         ])
         stackView.axis = .vertical
         stackView.spacing = 15
@@ -87,7 +106,7 @@ class HomeScreenView: UIView {
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
-    
+
     lazy var priorityLabel: UILabel = {
         var label = UILabel()
         label.text = "High Priority"
@@ -96,7 +115,7 @@ class HomeScreenView: UIView {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-    
+
     lazy var addInsightButton: UIButton = {
         var button = UIButton()
         button.setTitle("Add Insight", for: .normal)
@@ -105,7 +124,7 @@ class HomeScreenView: UIView {
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
-    
+
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         setup()
@@ -123,25 +142,49 @@ extension HomeScreenView: ViewCodeProtocol {
         [
             buttons,
             priorityLabel,
-            addInsightButton
-            
+            addInsightButton,
+
         ].forEach({ addSubview($0) })
     }
 
     func addConstraints() {
         NSLayoutConstraint.activate([
             buttons.topAnchor.constraint(equalTo: topAnchor, constant: 16),
-            buttons.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-            buttons.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
-            
-            priorityLabel.topAnchor.constraint(equalTo: buttons.bottomAnchor, constant: 16),
-            priorityLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-            priorityLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
-          
+            buttons.leadingAnchor.constraint(
+                equalTo: leadingAnchor,
+                constant: 16
+            ),
+            buttons.trailingAnchor.constraint(
+                equalTo: trailingAnchor,
+                constant: -16
+            ),
+
+            priorityLabel.topAnchor.constraint(
+                equalTo: buttons.bottomAnchor,
+                constant: 16
+            ),
+            priorityLabel.leadingAnchor.constraint(
+                equalTo: leadingAnchor,
+                constant: 16
+            ),
+            priorityLabel.trailingAnchor.constraint(
+                equalTo: trailingAnchor,
+                constant: -16
+            ),
+
             addInsightButton.heightAnchor.constraint(equalToConstant: 50),
-            addInsightButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -57),
-            addInsightButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-            addInsightButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            addInsightButton.bottomAnchor.constraint(
+                equalTo: bottomAnchor,
+                constant: -57
+            ),
+            addInsightButton.leadingAnchor.constraint(
+                equalTo: leadingAnchor,
+                constant: 16
+            ),
+            addInsightButton.trailingAnchor.constraint(
+                equalTo: trailingAnchor,
+                constant: -16
+            ),
         ])
     }
 

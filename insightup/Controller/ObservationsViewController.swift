@@ -57,17 +57,14 @@ class ObservationsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         setup()
         
         view.backgroundColor = .backgroundsGroupedPrimary
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.title = "Observations"
-        
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
-        navigationItem.hidesBackButton = true
-        
+
         filteredInsights = insights
         updateEmptyStateVisibility()
 
@@ -84,11 +81,9 @@ class ObservationsViewController: UIViewController {
             .foregroundColor: UIColor.colorsGreen
         ]
         
-        let navBar = navigationController!.navigationBar
-        navBar.standardAppearance = appearance
-        navBar.compactAppearance = appearance
-        navBar.scrollEdgeAppearance = appearance
-        //navBar.tintColor = .colorsGreen
+        navigationItem.standardAppearance = appearance
+        navigationItem.compactAppearance = appearance
+        navigationItem.scrollEdgeAppearance = appearance
     }
     
     private func updateEmptyStateVisibility() {
