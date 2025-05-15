@@ -93,10 +93,10 @@ class ModalAddInsightViewController: UIViewController {
         var component = PropertiesSelector()
         component.translatesAutoresizingMaskIntoConstraints = false
         component.configure(with:[
-            PropertyItem(title: "Priority", iconName: "exclamationmark.triangle.fill", options: ["Ideas", "Problems", "Feelings", "Observations"]),
-            PropertyItem(title: "Audience", iconName: "megaphone.fill", options: ["Ideas", "Problems", "Feelings", "Observations"]),
-            PropertyItem(title: "Execution Effort", iconName: "person.line.dotted.person.fill", options: ["Ideas", "Problems", "Feelings", "Observations"]),
-            PropertyItem(title: "Budget", iconName: "dollarsign.gauge.chart.leftthird.topthird.rightthird", options: ["Ideas", "Problems", "Feelings", "Observations"])
+            PropertyItem(title: "Priority", iconName: "exclamationmark.triangle.fill", options: ["Low", "Medium", "High"]),
+            PropertyItem(title: "Audience", iconName: "megaphone.fill", options: ["B2B", "B2C", "B2B2C", "B2E", "B2G", "C2C", "D2C"]),
+            PropertyItem(title: "Execution Effort", iconName: "person.line.dotted.person.fill", options: ["With 1 other", "2-4 team", "Cross-team +4", "External Help"]),
+            PropertyItem(title: "Budget", iconName: "dollarsign.gauge.chart.leftthird.topthird.rightthird", options: ["< R$100", "R$100-500", "R$500-1000", "R$2k +"])
         ])
         return component
     }()

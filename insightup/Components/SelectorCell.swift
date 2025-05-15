@@ -26,6 +26,7 @@ class SelectorCell: UITableViewCell {
 
         var configuration = UIButton.Configuration.plain()
         configuration.title = "None"
+        configuration.baseForegroundColor = UIColor(named: "LabelsSecondary")
         configuration.indicator = .popup
         configuration.imagePlacement = .leading
         configuration.imagePadding = 8
