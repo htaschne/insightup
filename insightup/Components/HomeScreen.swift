@@ -74,7 +74,7 @@ class HomeScreenView: UIView {
     }()
 
     @objc func handleAllButton() {
-        let vc = CategoryViewController(category: .Observations)
+        let vc = CategoryViewController(category: .All)
         guard let navigationController else { fatalError("Could not unwrap navigationController") }
         navigationController.pushViewController(vc, animated: true)
     }
