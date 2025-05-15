@@ -79,6 +79,35 @@ class ModalAddInsightViewController: UIViewController {
         stackView.spacing = 0
         return stackView
     }()
+    
+    lazy var componentCategory: PropertiesSelector = {
+        var component = PropertiesSelector()
+        component.translatesAutoresizingMaskIntoConstraints = false
+        component.configure(with:[
+            PropertyItem(title: "Category", iconName: "tag.fill", options: ["Ideas", "Problems", "Feelings", "Observations"])
+        ])
+        return component
+    }()
+
+    lazy var componentDetails: PropertiesSelector = {
+        var component = PropertiesSelector()
+        component.translatesAutoresizingMaskIntoConstraints = false
+        component.configure(with:[
+            PropertyItem(title: "Priority", iconName: "exclamationmark.triangle.fill", options: ["Ideas", "Problems", "Feelings", "Observations"]),
+            PropertyItem(title: "Audience", iconName: "megaphone.fill", options: ["Ideas", "Problems", "Feelings", "Observations"]),
+            PropertyItem(title: "Execution Effort", iconName: "person.line.dotted.person.fill", options: ["Ideas", "Problems", "Feelings", "Observations"]),
+            PropertyItem(title: "Budget", iconName: "dollarsign.gauge.chart.leftthird.topthird.rightthird", options: ["Ideas", "Problems", "Feelings", "Observations"])
+        ])
+        return component
+    }()
+    
+    lazy var mainStack: UIStackView = {
+        var stackView = UIStackView(arrangedSubviews: [TitleNotesStack, componentCategory, componentDetails])
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .vertical
+        stackView.spacing = 10
+        return stackView
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -108,7 +137,7 @@ extension ModalAddInsightViewController: ViewCodeProtocol {
     
     func addSubviews() {
         view.addSubview(navBar)
-        view.addSubview(TitleNotesStack)
+        view.addSubview(mainStack)
     }
     
     func addConstraints() {
@@ -119,10 +148,13 @@ extension ModalAddInsightViewController: ViewCodeProtocol {
             navBar.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             navBar.heightAnchor.constraint(equalToConstant: 44),
             
-            TitleNotesStack.topAnchor.constraint(equalTo: view.topAnchor, constant: 64),
-            TitleNotesStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            TitleNotesStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            mainStack.topAnchor.constraint(equalTo: view.topAnchor, constant: 64),
+            mainStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            mainStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             
+            componentCategory.heightAnchor.constraint(equalToConstant: 51),
+            componentDetails.heightAnchor.constraint(equalToConstant: 207),
+
             titleTextField.heightAnchor.constraint(equalToConstant: 52),
             notesTextView.heightAnchor.constraint(equalToConstant: 100)
             
