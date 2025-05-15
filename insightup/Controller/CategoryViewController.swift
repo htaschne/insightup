@@ -1,5 +1,5 @@
 //
-//  ObservationsViewController.swift
+//  CategoryViewController.swift
 //  insightup
 //
 //  Created by Enzo Tonatto on 13/05/25.
@@ -7,12 +7,23 @@
 
 import UIKit
 
-class ObservationsViewController: UIViewController {
+class CategoryViewController: UIViewController {
     
+    // MARK: Variables
     private var insights: [String] = []
-    
     private var filteredInsights: [String] = []
     
+    var category: InsightCategory?
+    init(category: InsightCategory) {
+        super.init(nibName: nil, bundle: nil)
+        self.category = category
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: Components
     private lazy var searchController: UISearchController = {
         let searchController = UISearchController()
         searchController.obscuresBackgroundDuringPresentation = false
@@ -71,13 +82,14 @@ class ObservationsViewController: UIViewController {
                         action: #selector(handleFilter))
     }()
     
+    // MARK: Initialization
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
         
         view.backgroundColor = .backgroundsGroupedPrimary
         navigationController?.navigationBar.prefersLargeTitles = true
-        navigationItem.title = "Observations"
+        navigationItem.title = category?.rawValue
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
         navigationItem.rightBarButtonItem = filterButton
@@ -91,11 +103,12 @@ class ObservationsViewController: UIViewController {
         appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = .backgroundsTertiary
         
+        guard let category else { return }
         appearance.titleTextAttributes = [
-            .foregroundColor: UIColor.colorsGreen
+            .foregroundColor: category.color
         ]
         appearance.largeTitleTextAttributes = [
-            .foregroundColor: UIColor.colorsGreen
+            .foregroundColor: category.color
         ]
         
         navigationItem.standardAppearance = appearance
@@ -115,7 +128,8 @@ class ObservationsViewController: UIViewController {
     }
 }
 
-extension ObservationsViewController: UISearchResultsUpdating, UISearchBarDelegate {
+// MARK: Protocols
+extension CategoryViewController: UISearchResultsUpdating, UISearchBarDelegate {
 
     @objc func updateSearchResults(for searchController: UISearchController) {
         let text = searchController.searchBar.text ?? ""
@@ -135,7 +149,7 @@ extension ObservationsViewController: UISearchResultsUpdating, UISearchBarDelega
     }
 }
 
-extension ObservationsViewController: UITableViewDataSource, UITableViewDelegate {
+extension CategoryViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return filteredInsights.count
@@ -153,7 +167,7 @@ extension ObservationsViewController: UITableViewDataSource, UITableViewDelegate
     }
 }
 
-extension ObservationsViewController: ViewCodeProtocol {
+extension CategoryViewController: ViewCodeProtocol {
     func addSubviews() {
         view.addSubview(emptyState)
         view.addSubview(insightsTableView)
