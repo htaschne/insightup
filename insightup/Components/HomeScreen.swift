@@ -17,26 +17,50 @@ class HomeScreenView: UIView {
         setup()
     }
     
+    @objc func handleIdeasButton() {
+        let vc = CategoryViewController(category: .Ideas)
+        guard let navigationController else { fatalError("Could not unwrap navigationController") }
+        navigationController.pushViewController(vc, animated: true)
+    }
+
     lazy var ideasButton: CardCategoryComponent = {
         let card = CardCategoryComponent(category: .Ideas)
         card.translatesAutoresizingMaskIntoConstraints = false
+        let tap = UITapGestureRecognizer(target: self, action: #selector(handleIdeasButton))
+        card.addGestureRecognizer(tap)
         return card
     }()
+    
+    @objc func handleProblemsButton() {
+        let vc = CategoryViewController(category: .Problems)
+        guard let navigationController else { fatalError("Could not unwrap navigationController") }
+        navigationController.pushViewController(vc, animated: true)
+    }
 
     lazy var problemsButton: CardCategoryComponent = {
         var card = CardCategoryComponent(category: .Problems)
         card.translatesAutoresizingMaskIntoConstraints = false
+        let tap = UITapGestureRecognizer(target: self, action: #selector(handleProblemsButton))
+        card.addGestureRecognizer(tap)
         return card
     }()
+    
+    @objc func handleFeelingsButton() {
+        let vc = CategoryViewController(category: .Feelings)
+        guard let navigationController else { fatalError("Could not unwrap navigationController") }
+        navigationController.pushViewController(vc, animated: true)
+    }
 
     lazy var feelingsButton: CardCategoryComponent = {
         var card = CardCategoryComponent(category: .Feelings)
         card.translatesAutoresizingMaskIntoConstraints = false
+        let tap = UITapGestureRecognizer(target: self, action: #selector(handleFeelingsButton))
+        card.addGestureRecognizer(tap)
         return card
     }()
     
     @objc func handleObservationButton() {
-        let vc = ObservationsViewController()
+        let vc = CategoryViewController(category: .Observations)
         guard let navigationController else { fatalError("Could not unwrap navigationController") }
         navigationController.pushViewController(vc, animated: true)
     }
@@ -49,9 +73,17 @@ class HomeScreenView: UIView {
         return card
     }()
 
+    @objc func handleAllButton() {
+        let vc = CategoryViewController(category: .Observations)
+        guard let navigationController else { fatalError("Could not unwrap navigationController") }
+        navigationController.pushViewController(vc, animated: true)
+    }
+
     lazy var allButton: CardCategoryComponent = {
         var card = CardCategoryComponent(category: .All)
         card.translatesAutoresizingMaskIntoConstraints = false
+        let tap = UITapGestureRecognizer(target: self, action: #selector(handleAllButton))
+        card.addGestureRecognizer(tap)
         return card
     }()
 
