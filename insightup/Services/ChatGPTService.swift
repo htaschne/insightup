@@ -14,8 +14,8 @@ class ChatGPTService {
     private let session: URLSession
     private let model: String
     
-    init(apiKey: String, model: String = "gpt-4o-mini") {
-        self.apiKey = apiKey
+    init(model: String = "gpt-4o-mini") {
+        self.apiKey = APIKeys.openAIKey
         self.model = model
         let config = URLSessionConfiguration.default
         config.timeoutIntervalForRequest = 30

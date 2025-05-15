@@ -131,7 +131,7 @@ class HomeScreenView: UIView {
 
     @objc private func handleTestChatGPT() {
         let prompt = "Você é um especialista em negócios. Me dê uma dica de business."
-        let chatGPTService = ChatGPTService(apiKey: "") // Substitua pela sua API key da OpenAI
+        let chatGPTService = ChatGPTService() // A API Key será lida de APIKeys.swift
         testChatGPTButton.isEnabled = false
         testChatGPTButton.setTitle("Carregando...", for: .normal)
         Task {
