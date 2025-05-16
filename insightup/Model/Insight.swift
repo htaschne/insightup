@@ -17,6 +17,7 @@ enum InsightCategory: String, Codable, CaseIterable {
             .Problems: "exclamationmark.bubble.fill",
             .Feelings: "heart.fill",
             .Observations: "eye.fill",
+            .All: "ellipsis",
         ][self, default: "ellipsis"]
     }
     

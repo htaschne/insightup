@@ -17,7 +17,6 @@ class PropertiesSelector: UIView {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.dataSource = self
         tableView.register(SelectorCell.self, forCellReuseIdentifier: SelectorCell.reuseIdentifier)
-        tableView.backgroundColor = .clear
         tableView.separatorStyle = .singleLine
         tableView.layer.cornerRadius = 12
         return tableView
@@ -69,10 +68,7 @@ extension PropertiesSelector: ViewCodeProtocol {
     func addConstraints() {
         NSLayoutConstraint.activate([
             
-            tableView.topAnchor.constraint(
-                equalTo: self.topAnchor,
-                constant: 8
-            ),
+            tableView.topAnchor.constraint(equalTo: self.topAnchor),
             tableView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
