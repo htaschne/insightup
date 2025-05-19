@@ -7,7 +7,7 @@
 
 import UIKit
 
-class HomeViewController: UIViewController {
+class HomeViewController: UIViewController, UISearchBarDelegate {
 
     private var insights: [Insight] = []
     private var filteredInsights: [Insight] = []
@@ -66,9 +66,18 @@ class HomeViewController: UIViewController {
         // appearence setup
         view.backgroundColor = UIColor(named: "BackgroundsPrimary")
 
-        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationController?.navigationBar.prefersLargeTitles = false
         navigationItem.title = "InsightUp"
         navigationItem.searchController = searchController
+
+        // Adiciona o botão de perfil customizado na navigation bar
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(systemName: "person.circle.fill"), for: .normal)
+        button.tintColor = .systemGray
+        button.addTarget(self, action: #selector(profileTapped), for: .touchUpInside)
+        button.frame = CGRect(x: 0, y: 0, width: 36, height: 36)
+        let barButton = UIBarButtonItem(customView: button)
+        navigationItem.rightBarButtonItem = barButton
 
         // search bar setup
         // TODO(Agatha): make this initialization better
@@ -77,6 +86,8 @@ class HomeViewController: UIViewController {
 
         // view setup
         setup()
+
+        searchController.delegate = self
     }
     
     @objc func modalButtonTapped() {
@@ -92,6 +103,30 @@ class HomeViewController: UIViewController {
 
         present(modalVC, animated: true)
 
+    }
+
+    @objc func profileTapped() {
+        // ação do perfil
+        print("Perfil clicado!")
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        // MOCK: Apresenta a tela de detalhes de um Insight para teste visual
+        let mockInsight = Insight(
+            title: "Polls in stories get the most replies",
+            notes: "Interactive content significantly boosts user engagement compared to traditional static posts. It encourages participation and fosters a deeper connection with the audience, making the experience more dynamic and enjoyable.",
+            category: .Observations,
+            priority: .Low,
+            audience: .B2B,
+            impact: .Low,
+            executionEffort: .Solo,
+            budget: .LessThan100
+        )
+        let detailVC = InsightDetailViewController(insight: mockInsight)
+        let nav = UINavigationController(rootViewController: detailVC)
+        nav.modalPresentationStyle = .fullScreen
+        self.present(nav, animated: true)
     }
 
 }
@@ -138,26 +173,25 @@ extension HomeViewController: UITableViewDataSource {
     }
 }
 
-extension HomeViewController: UISearchBarDelegate {
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        guard !searchText.isEmpty else {
-            filteredInsights = insights
-            tableView.reloadData()
-            return
-        }
-
-        filteredInsights = insights.filter {
-            $0.title.localizedCaseInsensitiveContains(searchText)
-        }
-
-        // Optional: use Levenshtein or fuzzy match here
-        tableView.reloadData()
-    }
-}
 
 extension HomeViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         // TODO(Agatha): update
     }
 
+}
+
+extension HomeViewController: UISearchControllerDelegate {
+    func willPresentSearchController(_ searchController: UISearchController) {
+        UIView.setAnimationsEnabled(false)
+    }
+    func didPresentSearchController(_ searchController: UISearchController) {
+        UIView.setAnimationsEnabled(true)
+    }
+    func willDismissSearchController(_ searchController: UISearchController) {
+        UIView.setAnimationsEnabled(false)
+    }
+    func didDismissSearchController(_ searchController: UISearchController) {
+        UIView.setAnimationsEnabled(true)
+    }
 }

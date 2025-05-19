@@ -17,8 +17,7 @@ enum InsightCategory: String, Codable, CaseIterable {
             .Problems: "exclamationmark.bubble.fill",
             .Feelings: "heart.fill",
             .Observations: "eye.fill",
-            .All: "ellipsis",
-        ][self, default: "ellipsis"]
+        ][self, default: "tray.fill"]
     }
     
     var color: UIColor {
@@ -56,7 +55,7 @@ struct Insight: Codable {
     var audience: TargetAudience
     var impact: Category
     var executionEffort: Effort
-    var bugdet: Budget
+    var budget: Budget
 }
 
 struct Insights: Codable {

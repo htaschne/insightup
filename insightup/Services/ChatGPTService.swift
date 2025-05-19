@@ -28,9 +28,10 @@ class ChatGPTService {
     /// Gera uma resposta usando a API do ChatGPT
     /// - Parameters:
     ///   - prompt: Texto do usuário
+    ///   - instructions: Instruções para o agente
     ///   - previousResponseID: ID de resposta anterior para continuar conversa (opcional)
-    func generateResponse(prompt: String, previousResponseID: String? = nil) async throws -> String {
-        guard let url = URL(string: "https://api.openai.com/v1/responses") else {
+    func generateResponse(prompt: String, instructions: String, previousResponseID: String? = nil) async throws -> String {
+        guard let url = URL(string: "https://api.openai.com/v1/chat/completions") else {
             throw ChatGPTError.invalidURL
         }
         
@@ -39,15 +40,19 @@ class ChatGPTService {
         request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
-        let payload = ResponsesAPIRequest(
-            model: model,
-            input: prompt,
-            previous_response_id: previousResponseID,
-            store: true
-        )
+        let messages: [[String: String]] = [
+            ["role": "system", "content": instructions],
+            ["role": "user", "content": prompt]
+        ]
+        
+        let payload: [String: Any] = [
+            "model": model,
+            "messages": messages,
+            "temperature": 0.3
+        ]
         
         do {
-            request.httpBody = try JSONEncoder().encode(payload)
+            request.httpBody = try JSONSerialization.data(withJSONObject: payload)
         } catch {
             throw ChatGPTError.networkError(error)
         }
@@ -67,42 +72,13 @@ class ChatGPTService {
                 }
                 throw ChatGPTError.apiError(String(data: data, encoding: .utf8) ?? "Resposta inválida da API")
             }
-            let decoded = try JSONDecoder().decode(ResponsesAPIResponse.self, from: data)
-            return decoded.bestText
+            let decoded = try JSONDecoder().decode(ChatCompletionsResponse.self, from: data)
+            return decoded.choices.first?.message.content ?? "No response"
         } catch let error as DecodingError {
             throw ChatGPTError.decodingError(error)
         } catch {
             throw ChatGPTError.networkError(error)
         }
-    }
-}
-
-// MARK: - Modelos para API responses
-
-/// Estrutura da requisição para o endpoint 'responses'
-private struct ResponsesAPIRequest: Encodable {
-    let model: String
-    let input: String
-    let previous_response_id: String?
-    let store: Bool?
-}
-
-/// Estrutura da resposta do endpoint 'responses'
-private struct ResponsesAPIResponse: Decodable {
-    let output_text: String?
-    let output: [Message]?
-    
-    struct Message: Decodable {
-        let content: [Content]
-    }
-    struct Content: Decodable {
-        let text: String
-    }
-    
-    var bestText: String {
-        output_text
-        ?? output?.first?.content.first?.text
-        ?? "No response"
     }
 }
 
