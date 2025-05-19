@@ -200,11 +200,11 @@ extension HomeScreenView: ViewCodeProtocol {
     }
 
     func addConstraints() {
-        ideasButton.heightAnchor.constraint(equalToConstant: 100).isActive = true
-        problemsButton.heightAnchor.constraint(equalToConstant: 100).isActive = true
-        feelingsButton.heightAnchor.constraint(equalToConstant: 100).isActive = true
-        observationsButton.heightAnchor.constraint(equalToConstant: 100).isActive = true
-        allButton.heightAnchor.constraint(equalToConstant: 100).isActive = true
+        ideasButton.heightAnchor.constraint(equalToConstant: 81).isActive = true
+        problemsButton.heightAnchor.constraint(equalToConstant: 81).isActive = true
+        feelingsButton.heightAnchor.constraint(equalToConstant: 81).isActive = true
+        observationsButton.heightAnchor.constraint(equalToConstant: 81).isActive = true
+        allButton.heightAnchor.constraint(equalToConstant: 81).isActive = true
 
         NSLayoutConstraint.activate([
             buttons.topAnchor.constraint(equalTo: topAnchor, constant: 16),
@@ -232,7 +232,7 @@ extension HomeScreenView: ViewCodeProtocol {
             highPriorityTableView.topAnchor.constraint(equalTo: priorityLabel.bottomAnchor, constant: 8),
             highPriorityTableView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
             highPriorityTableView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
-            highPriorityTableView.bottomAnchor.constraint(equalTo: addInsightButton.topAnchor, constant: -16),
+            highPriorityTableView.bottomAnchor.constraint(equalTo: addInsightButton.topAnchor, constant: -70),
 
 
             addInsightButton.heightAnchor.constraint(equalToConstant: 50),
@@ -255,7 +255,7 @@ extension HomeScreenView: ViewCodeProtocol {
 
 extension HomeScreenView: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return topInsights.count
+        return 3
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

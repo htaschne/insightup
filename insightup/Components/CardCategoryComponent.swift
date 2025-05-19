@@ -41,9 +41,9 @@ class CardCategoryComponent: UIView {
         iconBackgroundView.translatesAutoresizingMaskIntoConstraints = false
         iconBackgroundView.layer.cornerRadius = 17
         iconBackgroundView.clipsToBounds = true
-        iconBackgroundView.widthAnchor.constraint(equalToConstant: 34)
+        iconBackgroundView.widthAnchor.constraint(equalToConstant: 32)
             .isActive = true
-        iconBackgroundView.heightAnchor.constraint(equalToConstant: 34)
+        iconBackgroundView.heightAnchor.constraint(equalToConstant: 32)
             .isActive = true
 
         // Icon
