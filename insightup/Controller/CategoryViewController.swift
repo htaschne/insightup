@@ -54,7 +54,6 @@ class CategoryViewController: UIViewController {
     }
     
     private lazy var addInsightButton: UIButton = {
-        
         var config = UIButton.Configuration.filled()
         config.title = "Add Insight"
         config.image = UIImage(systemName: "plus")
