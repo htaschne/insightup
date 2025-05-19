@@ -8,18 +8,19 @@
 import UIKit
 
 class HomeScreenView: UIView {
-    
+
     private var topInsights: [Insight] = []
 
     var navigationController: UINavigationController?
-    
+
     private func loadTopInsights() {
         let allInsights = InsightPersistence.getAll().insights
 
         let priorityOrder: [Category] = [.High, .Medium, .Low, .None]
         let sortedInsights = allInsights.sorted {
             guard let firstIndex = priorityOrder.firstIndex(of: $0.priority),
-                  let secondIndex = priorityOrder.firstIndex(of: $1.priority) else {
+                let secondIndex = priorityOrder.firstIndex(of: $1.priority)
+            else {
                 return false
             }
             return firstIndex < secondIndex
@@ -37,58 +38,78 @@ class HomeScreenView: UIView {
         setup()
         loadTopInsights()
     }
-    
+
     @objc func handleIdeasButton() {
         let vc = CategoryViewController(category: .Ideas)
-        guard let navigationController else { fatalError("Could not unwrap navigationController") }
+        guard let navigationController else {
+            fatalError("Could not unwrap navigationController")
+        }
         navigationController.pushViewController(vc, animated: true)
     }
 
     lazy var ideasButton: CardCategoryComponent = {
         let card = CardCategoryComponent(category: .Ideas)
         card.translatesAutoresizingMaskIntoConstraints = false
-        let tap = UITapGestureRecognizer(target: self, action: #selector(handleIdeasButton))
+        let tap = UITapGestureRecognizer(
+            target: self,
+            action: #selector(handleIdeasButton)
+        )
         card.addGestureRecognizer(tap)
         return card
     }()
-    
+
     @objc func handleProblemsButton() {
         let vc = CategoryViewController(category: .Problems)
-        guard let navigationController else { fatalError("Could not unwrap navigationController") }
+        guard let navigationController else {
+            fatalError("Could not unwrap navigationController")
+        }
         navigationController.pushViewController(vc, animated: true)
     }
 
     lazy var problemsButton: CardCategoryComponent = {
         var card = CardCategoryComponent(category: .Problems)
         card.translatesAutoresizingMaskIntoConstraints = false
-        let tap = UITapGestureRecognizer(target: self, action: #selector(handleProblemsButton))
+        let tap = UITapGestureRecognizer(
+            target: self,
+            action: #selector(handleProblemsButton)
+        )
         card.addGestureRecognizer(tap)
         return card
     }()
-    
+
     @objc func handleFeelingsButton() {
         let vc = CategoryViewController(category: .Feelings)
-        guard let navigationController else { fatalError("Could not unwrap navigationController") }
+        guard let navigationController else {
+            fatalError("Could not unwrap navigationController")
+        }
         navigationController.pushViewController(vc, animated: true)
     }
 
     lazy var feelingsButton: CardCategoryComponent = {
         var card = CardCategoryComponent(category: .Feelings)
         card.translatesAutoresizingMaskIntoConstraints = false
-        let tap = UITapGestureRecognizer(target: self, action: #selector(handleFeelingsButton))
+        let tap = UITapGestureRecognizer(
+            target: self,
+            action: #selector(handleFeelingsButton)
+        )
         card.addGestureRecognizer(tap)
         return card
     }()
-    
+
     @objc func handleObservationButton() {
         let vc = CategoryViewController(category: .Observations)
-        guard let navigationController else { fatalError("Could not unwrap navigationController") }
+        guard let navigationController else {
+            fatalError("Could not unwrap navigationController")
+        }
         navigationController.pushViewController(vc, animated: true)
     }
-    
+
     lazy var observationsButton: CardCategoryComponent = {
         var card = CardCategoryComponent(category: .Observations)
-        let tap = UITapGestureRecognizer(target: self, action: #selector(handleObservationButton))
+        let tap = UITapGestureRecognizer(
+            target: self,
+            action: #selector(handleObservationButton)
+        )
         card.translatesAutoresizingMaskIntoConstraints = false
         card.addGestureRecognizer(tap)
         return card
@@ -96,14 +117,19 @@ class HomeScreenView: UIView {
 
     @objc func handleAllButton() {
         let vc = CategoryViewController(category: .All)
-        guard let navigationController else { fatalError("Could not unwrap navigationController") }
+        guard let navigationController else {
+            fatalError("Could not unwrap navigationController")
+        }
         navigationController.pushViewController(vc, animated: true)
     }
 
     lazy var allButton: CardCategoryComponent = {
         var card = CardCategoryComponent(category: .All)
         card.translatesAutoresizingMaskIntoConstraints = false
-        let tap = UITapGestureRecognizer(target: self, action: #selector(handleAllButton))
+        let tap = UITapGestureRecognizer(
+            target: self,
+            action: #selector(handleAllButton)
+        )
         card.addGestureRecognizer(tap)
         return card
     }()
@@ -151,20 +177,24 @@ class HomeScreenView: UIView {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-    
+
     lazy var highPriorityTableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.dataSource = self
+        tableView.delegate = self
         tableView.isScrollEnabled = false
         tableView.rowHeight = 44
-        tableView.register(HighPriorityInsightCell.self, forCellReuseIdentifier: HighPriorityInsightCell.reuseIdentifier)
+        tableView.register(
+            HighPriorityInsightCell.self,
+            forCellReuseIdentifier: HighPriorityInsightCell.reuseIdentifier
+        )
         tableView.layer.cornerRadius = 12
         tableView.clipsToBounds = true
         tableView.backgroundColor = .systemBackground
         return tableView
     }()
-    
+
     @objc func handleAddInsight() {
         let vc = ModalAddInsightViewController()
         vc.modalPresentationStyle = .pageSheet
@@ -227,9 +257,12 @@ extension HomeScreenView: ViewCodeProtocol {
 
     func addConstraints() {
         ideasButton.heightAnchor.constraint(equalToConstant: 81).isActive = true
-        problemsButton.heightAnchor.constraint(equalToConstant: 81).isActive = true
-        feelingsButton.heightAnchor.constraint(equalToConstant: 81).isActive = true
-        observationsButton.heightAnchor.constraint(equalToConstant: 81).isActive = true
+        problemsButton.heightAnchor.constraint(equalToConstant: 81).isActive =
+            true
+        feelingsButton.heightAnchor.constraint(equalToConstant: 81).isActive =
+            true
+        observationsButton.heightAnchor.constraint(equalToConstant: 81)
+            .isActive = true
         allButton.heightAnchor.constraint(equalToConstant: 81).isActive = true
 
         NSLayoutConstraint.activate([
@@ -255,10 +288,21 @@ extension HomeScreenView: ViewCodeProtocol {
                 equalTo: trailingAnchor,
                 constant: -16
             ),
-            highPriorityTableView.topAnchor.constraint(equalTo: priorityLabel.bottomAnchor, constant: 8),
-            highPriorityTableView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-            highPriorityTableView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
-            highPriorityTableView.heightAnchor.constraint(equalToConstant: (44 * 3 - 1)),
+            highPriorityTableView.topAnchor.constraint(
+                equalTo: priorityLabel.bottomAnchor,
+                constant: 8
+            ),
+            highPriorityTableView.leadingAnchor.constraint(
+                equalTo: leadingAnchor,
+                constant: 16
+            ),
+            highPriorityTableView.trailingAnchor.constraint(
+                equalTo: trailingAnchor,
+                constant: -16
+            ),
+            highPriorityTableView.heightAnchor.constraint(
+                equalToConstant: (44 * 3 - 1)
+            ),
 
             addInsightButton.heightAnchor.constraint(equalToConstant: 50),
             addInsightButton.topAnchor.constraint(
@@ -279,15 +323,35 @@ extension HomeScreenView: ViewCodeProtocol {
 }
 
 extension HomeScreenView: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int)
+        -> Int
+    {
         return topInsights.count
     }
 
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: HighPriorityInsightCell.reuseIdentifier, for: indexPath) as? HighPriorityInsightCell else {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath)
+        -> UITableViewCell
+    {
+        guard
+            let cell = tableView.dequeueReusableCell(
+                withIdentifier: HighPriorityInsightCell.reuseIdentifier,
+                for: indexPath
+            ) as? HighPriorityInsightCell
+        else {
             return UITableViewCell()
         }
         cell.configure(with: topInsights[indexPath.row])
         return cell
     }
+}
+
+extension HomeScreenView: UITableViewDelegate {
+
+    func tableView(
+        _ tableView: UITableView,
+        didSelectRowAt indexPath: IndexPath
+    ) {
+        print("selected row \(indexPath)")
+    }
+
 }
