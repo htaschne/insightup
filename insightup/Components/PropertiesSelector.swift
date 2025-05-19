@@ -37,6 +37,18 @@ class PropertiesSelector: UIView {
 
         tableView.reloadData()
     }
+    
+    func getValue(for title: String) -> String? {
+        for i in 0..<items.count {
+            if items[i].title == title,
+               let cell = tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SelectorCell {
+                return cell.btnCategory.configuration?.title
+            }
+        }
+        return nil
+    }
+
+
 }
 
 

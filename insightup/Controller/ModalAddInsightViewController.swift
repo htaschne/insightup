@@ -93,10 +93,26 @@ class ModalAddInsightViewController: UIViewController {
         var component = PropertiesSelector()
         component.translatesAutoresizingMaskIntoConstraints = false
         component.configure(with:[
-            PropertyItem(title: "Priority", iconName: "exclamationmark.triangle.fill", options: ["Low", "Medium", "High"]),
-            PropertyItem(title: "Audience", iconName: "megaphone.fill", options: ["B2B", "B2C", "B2B2C", "B2E", "B2G", "C2C", "D2C"]),
-            PropertyItem(title: "Execution Effort", iconName: "person.line.dotted.person.fill", options: ["With 1 other", "2-4 team", "Cross-team +4", "External Help"]),
-            PropertyItem(title: "Budget", iconName: "dollarsign.gauge.chart.leftthird.topthird.rightthird", options: ["< R$100", "R$100-500", "R$500-1000", "R$2k +"])
+            PropertyItem(
+                    title: "Priority",
+                    iconName: "exclamationmark.triangle.fill",
+                    options: Category.allCases.map { $0.rawValue }
+                ),
+                PropertyItem(
+                    title: "Audience",
+                    iconName: "megaphone.fill",
+                    options: TargetAudience.allCases.map { $0.rawValue }
+                ),
+                PropertyItem(
+                    title: "Execution Effort",
+                    iconName: "person.line.dotted.person.fill",
+                    options: Effort.allCases.map { $0.rawValue }
+                ),
+                PropertyItem(
+                    title: "Budget",
+                    iconName: "dollarsign.gauge.chart.leftthird.topthird.rightthird",
+                    options: Budget.allCases.map { $0.rawValue }
+                )
         ])
         return component
     }()
@@ -121,15 +137,67 @@ class ModalAddInsightViewController: UIViewController {
     }
     
     @objc func handleAdd() {
-                
-//      MARK: Implementar a funcionalidade de adicão de Insight aqui!
+        guard let title = titleTextField.text, !title.isEmpty else {
+            print("Título é obrigatório.")
+            return
+        }
+
+        let notes = notesTextView.text ?? ""
+
+        guard let selectedCategoryString = componentCategory.getValue(for: "Category"),
+              let selectedCategory = InsightCategory(rawValue: selectedCategoryString) else {
+            print("Categoria inválida.")
+            return
+        }
+
+        guard let priorityString = componentDetails.getValue(for: "Priority"),
+              let priority = Category(rawValue: priorityString) else {
+            print("Prioridade inválida.")
+            return
+        }
+
+        guard let audienceString = componentDetails.getValue(for: "Audience"),
+              let audience = TargetAudience(rawValue: audienceString) else {
+            print("Público inválido.")
+            return
+        }
         
-        print("Button Add Pressed - from navBar !!!!!")
+        guard let effortString = componentDetails.getValue(for: "Execution Effort"),
+              let effort = Effort(rawValue: effortString) else {
+            print("Esforço inválido.")
+            return
+        }
+
+        guard let budgetString = componentDetails.getValue(for: "Budget"),
+              let budget = Budget(rawValue: budgetString) else {
+            print("Orçamento inválido.")
+            return
+        }
+
+        let newInsight = Insight(
+            title: title,
+            notes: notes,
+            category: selectedCategory,
+            priority: priority,
+            audience: audience,
+            executionEffort: effort,
+            bugdet: budget
+        )
+
+        InsightPersistence.saveInsight(newInsight: newInsight)
+        
+        let allInsights = InsightPersistence.getAll().insights
+        print("📋 Todos os insights salvos:")
+        for (index, insight) in allInsights.enumerated() {
+            print("🧠 [\(index)] \(insight.title) – Categoria: \(insight.category.rawValue)")
+        }
         
         dismiss(animated: true) {
             self.onDone?()
         }
     }
+
+
 
 }
 
