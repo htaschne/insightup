@@ -164,13 +164,39 @@ class HomeScreenView: UIView {
         tableView.backgroundColor = .systemBackground
         return tableView
     }()
+    
+    @objc func handleAddInsight() {
+        let vc = ModalAddInsightViewController()
+        vc.modalPresentationStyle = .pageSheet
+        navigationController?.present(vc, animated: true)
+    }
 
     lazy var addInsightButton: UIButton = {
-        var button = UIButton()
-        button.setTitle("Add Insight", for: .normal)
-        button.backgroundColor = .systemBlue
-        button.layer.cornerRadius = 10
+        var config = UIButton.Configuration.filled()
+        config.title = "Add Insight"
+        config.image = UIImage(systemName: "plus")
+        config.imagePlacement = .leading
+        config.imagePadding = 4
+        config.contentInsets = .init(
+            top: 14,
+            leading: 16,
+            bottom: 14,
+            trailing: 16
+        )
+        config.baseBackgroundColor = .colorsBlue
+        config.baseForegroundColor = .white
+        config.cornerStyle = .medium
+
+        let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
+        button.configuration = config
+        button.layer.cornerRadius = 8
+        button.addTarget(
+            self,
+            action: #selector(handleAddInsight),
+            for: .touchUpInside
+        )
+
         return button
     }()
 
@@ -232,13 +258,12 @@ extension HomeScreenView: ViewCodeProtocol {
             highPriorityTableView.topAnchor.constraint(equalTo: priorityLabel.bottomAnchor, constant: 8),
             highPriorityTableView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
             highPriorityTableView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
-            highPriorityTableView.bottomAnchor.constraint(equalTo: addInsightButton.topAnchor, constant: -70),
-
+            highPriorityTableView.heightAnchor.constraint(equalToConstant: (44 * 3 - 1)),
 
             addInsightButton.heightAnchor.constraint(equalToConstant: 50),
-            addInsightButton.bottomAnchor.constraint(
-                equalTo: bottomAnchor,
-                constant: -57
+            addInsightButton.topAnchor.constraint(
+                equalTo: highPriorityTableView.bottomAnchor,
+                constant: 16
             ),
             addInsightButton.leadingAnchor.constraint(
                 equalTo: leadingAnchor,
