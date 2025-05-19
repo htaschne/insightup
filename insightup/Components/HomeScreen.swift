@@ -8,13 +8,34 @@
 import UIKit
 
 class HomeScreenView: UIView {
+    
+    private var topInsights: [Insight] = []
 
     var navigationController: UINavigationController?
+    
+    private func loadTopInsights() {
+        let allInsights = InsightPersistence.getAll().insights
+
+        let priorityOrder: [Category] = [.High, .Medium, .Low, .None]
+        let sortedInsights = allInsights.sorted {
+            guard let firstIndex = priorityOrder.firstIndex(of: $0.priority),
+                  let secondIndex = priorityOrder.firstIndex(of: $1.priority) else {
+                return false
+            }
+            return firstIndex < secondIndex
+        }
+
+        topInsights = Array(sortedInsights.prefix(3))
+        highPriorityTableView.isHidden = topInsights.isEmpty
+        priorityLabel.isHidden = topInsights.isEmpty
+        highPriorityTableView.reloadData()
+    }
 
     init(navigationController: UINavigationController) {
         super.init(frame: .zero)
         self.navigationController = navigationController
         setup()
+        loadTopInsights()
     }
     
     @objc func handleIdeasButton() {
@@ -130,6 +151,19 @@ class HomeScreenView: UIView {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
+    
+    lazy var highPriorityTableView: UITableView = {
+        let tableView = UITableView()
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.dataSource = self
+        tableView.isScrollEnabled = false
+        tableView.rowHeight = 44
+        tableView.register(HighPriorityInsightCell.self, forCellReuseIdentifier: HighPriorityInsightCell.reuseIdentifier)
+        tableView.layer.cornerRadius = 12
+        tableView.clipsToBounds = true
+        tableView.backgroundColor = .systemBackground
+        return tableView
+    }()
 
     lazy var addInsightButton: UIButton = {
         var button = UIButton()
@@ -143,11 +177,13 @@ class HomeScreenView: UIView {
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         setup()
+        loadTopInsights()
     }
 
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
+        loadTopInsights()
     }
 
 }
@@ -157,6 +193,7 @@ extension HomeScreenView: ViewCodeProtocol {
         [
             buttons,
             priorityLabel,
+            highPriorityTableView,
             addInsightButton,
 
         ].forEach({ addSubview($0) })
@@ -192,6 +229,11 @@ extension HomeScreenView: ViewCodeProtocol {
                 equalTo: trailingAnchor,
                 constant: -16
             ),
+            highPriorityTableView.topAnchor.constraint(equalTo: priorityLabel.bottomAnchor, constant: 8),
+            highPriorityTableView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            highPriorityTableView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            highPriorityTableView.bottomAnchor.constraint(equalTo: addInsightButton.topAnchor, constant: -16),
+
 
             addInsightButton.heightAnchor.constraint(equalToConstant: 50),
             addInsightButton.bottomAnchor.constraint(
@@ -209,4 +251,18 @@ extension HomeScreenView: ViewCodeProtocol {
         ])
     }
 
+}
+
+extension HomeScreenView: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return topInsights.count
+    }
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: HighPriorityInsightCell.reuseIdentifier, for: indexPath) as? HighPriorityInsightCell else {
+            return UITableViewCell()
+        }
+        cell.configure(with: topInsights[indexPath.row])
+        return cell
+    }
 }
