@@ -47,9 +47,13 @@ class CategoryViewController: UIViewController {
         return tableView
     }()
     
+    @objc func handleAddInsight() {
+        let vc = ModalAddInsightViewController()
+        vc.modalPresentationStyle = .pageSheet
+        present(vc, animated: true)
+    }
+    
     private lazy var addInsightButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.translatesAutoresizingMaskIntoConstraints = false
         
         var config = UIButton.Configuration.filled()
         config.title = "Add Insight"
@@ -61,9 +65,12 @@ class CategoryViewController: UIViewController {
         config.baseForegroundColor = .white
         config.cornerStyle = .medium
         
+        let button = UIButton(type: .system)
+        button.translatesAutoresizingMaskIntoConstraints = false
         button.configuration = config
-        
         button.layer.cornerRadius = 8
+        button.addTarget(self, action: #selector(handleAddInsight), for: .touchUpInside)
+    
         return button
     }()
     
