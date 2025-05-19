@@ -57,6 +57,6 @@ struct InsightPersistence {
     }
 
     static func getAllBy(category: InsightCategory) -> [Insight] {
-        return getAll().insights.filter { $0.category == category }
+        return category == .All ? getAll().insights : getAll().insights.filter { $0.category == category }
     }
 }

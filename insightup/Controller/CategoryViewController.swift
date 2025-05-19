@@ -105,10 +105,7 @@ class CategoryViewController: UIViewController {
 
     private func loadInsights() {
         guard let category else { return }
-        let allInsights =
-            category == .All
-            ? InsightPersistence.getAll().insights
-            : InsightPersistence.getAllBy(category: category)
+        let allInsights = InsightPersistence.getAllBy(category: category)
 
         insights = allInsights.map { $0.title }
         filteredInsights = insights
