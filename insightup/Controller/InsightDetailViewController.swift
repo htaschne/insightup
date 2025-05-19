@@ -1,5 +1,6 @@
 import UIKit
 
+
 class InsightDetailViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIDocumentPickerDelegate, PropertiesSelectorDelegate {
     var insight: Insight
 
@@ -100,6 +101,7 @@ class InsightDetailViewController: UIViewController, UIImagePickerControllerDele
             insight: insight,
             dateString: "Added on 19/05/2025"
         )
+        card.backgroundColor = .backgroundsTertiary
         contentStack.addArrangedSubview(card)
 
         // PropertiesSelector (filtros)
@@ -128,20 +130,136 @@ class InsightDetailViewController: UIViewController, UIImagePickerControllerDele
         contentStack.addArrangedSubview(propertiesSelector)
         propertiesSelector.heightAnchor.constraint(equalToConstant: 207).isActive = true
 
-        // Seção de imagens
-        let imageSection = mediaSection(title: "Add Image", items: selectedImages.map { .image($0) }, addSelector: #selector(addImageTapped), removeSelector: #selector(removeImageTapped(_:)))
+        // Seção de imagens como card
+        let imageSection = UIView()
+        imageSection.backgroundColor = .backgroundsTertiary
+        imageSection.layer.cornerRadius = 16
+        imageSection.translatesAutoresizingMaskIntoConstraints = false
+        let imageStack = UIStackView()
+        imageStack.axis = .vertical
+        imageStack.spacing = 0
+        imageStack.translatesAutoresizingMaskIntoConstraints = false
+        imageSection.addSubview(imageStack)
+        NSLayoutConstraint.activate([
+            imageStack.topAnchor.constraint(equalTo: imageSection.topAnchor),
+            imageStack.leadingAnchor.constraint(equalTo: imageSection.leadingAnchor),
+            imageStack.trailingAnchor.constraint(equalTo: imageSection.trailingAnchor),
+            imageStack.bottomAnchor.constraint(equalTo: imageSection.bottomAnchor)
+        ])
+        // Botão Add Image
+        let addImageButton = UIButton(type: .system)
+        addImageButton.setTitle("Add Image", for: .normal)
+        addImageButton.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
+        addImageButton.contentHorizontalAlignment = .left
+        addImageButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0)
+        addImageButton.setTitleColor(.systemBlue, for: .normal)
+        addImageButton.backgroundColor = .clear
+        addImageButton.heightAnchor.constraint(equalToConstant: 48).isActive = true
+        addImageButton.addTarget(self, action: #selector(addImageTapped), for: .touchUpInside)
+        imageStack.addArrangedSubview(addImageButton)
+        // Imagens adicionadas
+        for (idx, img) in selectedImages.enumerated() {
+            let imgRow = UIStackView()
+            imgRow.axis = .horizontal
+            imgRow.spacing = 12
+            imgRow.alignment = .center
+            imgRow.layoutMargins = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0)
+            imgRow.isLayoutMarginsRelativeArrangement = true
+            let removeButton = UIButton(type: .system)
+            removeButton.setImage(UIImage(systemName: "minus.circle.fill"), for: .normal)
+            removeButton.tintColor = .systemRed
+            removeButton.tag = idx
+            removeButton.addTarget(self, action: #selector(removeImageTapped(_:)), for: .touchUpInside)
+            imgRow.addArrangedSubview(removeButton)
+            let imgView = UIImageView(image: img)
+            imgView.contentMode = .scaleAspectFit
+            imgView.layer.cornerRadius = 6
+            imgView.clipsToBounds = true
+            imgView.widthAnchor.constraint(equalToConstant: 32).isActive = true
+            imgView.heightAnchor.constraint(equalToConstant: 32).isActive = true
+            imgRow.addArrangedSubview(imgView)
+            let label = UILabel()
+            label.text = "Image"
+            label.font = UIFont.systemFont(ofSize: 17, weight: .regular)
+            imgRow.addArrangedSubview(label)
+            imgRow.addArrangedSubview(UIView()) // Spacer
+            imgRow.heightAnchor.constraint(equalToConstant: 40).isActive = true
+            imageStack.addArrangedSubview(imgRow)
+        }
+        // Espaço extra no final do card de imagens, apenas se houver imagens
+        if !selectedImages.isEmpty {
+            let imageBottomSpacer = UIView()
+            imageBottomSpacer.heightAnchor.constraint(equalToConstant: 12).isActive = true
+            imageStack.addArrangedSubview(imageBottomSpacer)
+        }
+
+        // Seção de áudios como card
+        let audioSection = UIView()
+        audioSection.backgroundColor = .backgroundsTertiary
+        audioSection.layer.cornerRadius = 16
+        audioSection.translatesAutoresizingMaskIntoConstraints = false
+        let audioStack = UIStackView()
+        audioStack.axis = .vertical
+        audioStack.spacing = 0
+        audioStack.translatesAutoresizingMaskIntoConstraints = false
+        audioSection.addSubview(audioStack)
+        NSLayoutConstraint.activate([
+            audioStack.topAnchor.constraint(equalTo: audioSection.topAnchor),
+            audioStack.leadingAnchor.constraint(equalTo: audioSection.leadingAnchor),
+            audioStack.trailingAnchor.constraint(equalTo: audioSection.trailingAnchor),
+            audioStack.bottomAnchor.constraint(equalTo: audioSection.bottomAnchor)
+        ])
+        // Botão Add Audio
+        let addAudioButton = UIButton(type: .system)
+        addAudioButton.setTitle("Add Audio", for: .normal)
+        addAudioButton.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
+        addAudioButton.contentHorizontalAlignment = .left
+        addAudioButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0)
+        addAudioButton.setTitleColor(.systemBlue, for: .normal)
+        addAudioButton.backgroundColor = .clear
+        addAudioButton.heightAnchor.constraint(equalToConstant: 48).isActive = true
+        addAudioButton.addTarget(self, action: #selector(addAudioTapped), for: .touchUpInside)
+        audioStack.addArrangedSubview(addAudioButton)
+        // Áudios adicionados
+        for (idx, url) in selectedAudios.enumerated() {
+            let audioRow = UIStackView()
+            audioRow.axis = .horizontal
+            audioRow.spacing = 12
+            audioRow.alignment = .center
+            audioRow.layoutMargins = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0)
+            audioRow.isLayoutMarginsRelativeArrangement = true
+            let removeButton = UIButton(type: .system)
+            removeButton.setImage(UIImage(systemName: "minus.circle.fill"), for: .normal)
+            removeButton.tintColor = .systemRed
+            removeButton.tag = idx
+            removeButton.addTarget(self, action: #selector(removeAudioTapped(_:)), for: .touchUpInside)
+            audioRow.addArrangedSubview(removeButton)
+            let icon = UIImageView(image: UIImage(systemName: "waveform"))
+            icon.tintColor = .label
+            icon.contentMode = .scaleAspectFit
+            icon.translatesAutoresizingMaskIntoConstraints = false
+            icon.widthAnchor.constraint(equalToConstant: 32).isActive = true
+            icon.heightAnchor.constraint(equalToConstant: 32).isActive = true
+            audioRow.addArrangedSubview(icon)
+            let label = UILabel()
+            label.text = url.lastPathComponent
+            label.font = UIFont.systemFont(ofSize: 17, weight: .regular)
+            audioRow.addArrangedSubview(label)
+            audioRow.addArrangedSubview(UIView()) // Spacer
+            audioRow.heightAnchor.constraint(equalToConstant: 40).isActive = true
+            audioStack.addArrangedSubview(audioRow)
+        }
+        // Espaço extra no final do card de áudios, apenas se houver áudios
+        if !selectedAudios.isEmpty {
+            let audioBottomSpacer = UIView()
+            audioBottomSpacer.heightAnchor.constraint(equalToConstant: 12).isActive = true
+            audioStack.addArrangedSubview(audioBottomSpacer)
+        }
+
         contentStack.addArrangedSubview(imageSection)
         imageSection.heightAnchor.constraint(greaterThanOrEqualToConstant: 48).isActive = true
-
-        // Seção de áudios
-        let audioSection = mediaSection(title: "Add Audio", items: selectedAudios.map { .audio($0) }, addSelector: #selector(addAudioTapped), removeSelector: #selector(removeAudioTapped(_:)))
         contentStack.addArrangedSubview(audioSection)
         audioSection.heightAnchor.constraint(greaterThanOrEqualToConstant: 48).isActive = true
-
-        // Espaçador antes do botão fixo
-        let spacerView = UIView()
-        spacerView.setContentHuggingPriority(.defaultLow, for: .vertical)
-        contentStack.addArrangedSubview(spacerView)
     }
 
     // MARK: PropertiesSelectorDelegate
@@ -164,56 +282,50 @@ class InsightDetailViewController: UIViewController, UIImagePickerControllerDele
 
     private func mediaSection(title: String, items: [MediaItem], addSelector: Selector, removeSelector: Selector) -> UIView {
         let container = UIView()
-        container.backgroundColor = UIColor.white
+        container.backgroundColor = .backgroundsTertiary
         container.layer.cornerRadius = 16
         container.translatesAutoresizingMaskIntoConstraints = false
 
-        // Título azul
+        // Stack para título e botão
+        let headerStack = UIStackView()
+        headerStack.axis = .horizontal
+        headerStack.alignment = .center
+        headerStack.spacing = 8
+        headerStack.translatesAutoresizingMaskIntoConstraints = false
+        container.addSubview(headerStack)
+        
+        // Título
         let titleLabel = UILabel()
         titleLabel.text = title
         titleLabel.textColor = .systemBlue
         titleLabel.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         titleLabel.textAlignment = .left
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        container.addSubview(titleLabel)
-        NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: container.topAnchor, constant: 12),
-            titleLabel.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 16)
-        ])
-
-        // Botão de adicionar (invisível, cobre a área do título)
+        headerStack.addArrangedSubview(titleLabel)
+        headerStack.setCustomSpacing(0, after: titleLabel)
+        
+        // Botão de adicionar
         let addButton = UIButton(type: .system)
-        addButton.backgroundColor = .clear
+        addButton.setTitle("Add", for: .normal)
+        addButton.tintColor = .systemBlue
+        addButton.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         addButton.addTarget(self, action: addSelector, for: .touchUpInside)
-        addButton.translatesAutoresizingMaskIntoConstraints = false
-        container.addSubview(addButton)
+        headerStack.addArrangedSubview(addButton)
+        
+        // Spacer para empurrar o botão para a direita
+        let spacer = UIView()
+        headerStack.addArrangedSubview(spacer)
+        spacer.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        spacer.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        
         NSLayoutConstraint.activate([
-            addButton.topAnchor.constraint(equalTo: container.topAnchor),
-            addButton.leadingAnchor.constraint(equalTo: container.leadingAnchor),
-            addButton.trailingAnchor.constraint(equalTo: container.trailingAnchor),
+            headerStack.topAnchor.constraint(equalTo: container.topAnchor, constant: 12),
+            headerStack.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 16),
+            headerStack.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -16),
             addButton.heightAnchor.constraint(equalToConstant: 44)
         ])
 
-        // Adjust colors for dark mode
-        container.backgroundColor = UIColor { traitCollection in
-            switch traitCollection.userInterfaceStyle {
-            case .dark:
-                return UIColor.black
-            default:
-                return UIColor.white
-            }
-        }
-        titleLabel.textColor = UIColor { traitCollection in
-            switch traitCollection.userInterfaceStyle {
-            case .dark:
-                return UIColor.systemBlue
-            default:
-                return UIColor.systemBlue
-            }
-        }
-
         // Stack para arquivos
-        var lastView: UIView = titleLabel
+        var lastView: UIView = headerStack
         for (idx, item) in items.enumerated() {
             let fileStack = UIStackView()
             fileStack.axis = .horizontal
@@ -315,8 +427,7 @@ class InsightDetailViewController: UIViewController, UIImagePickerControllerDele
     }
 
     @objc private func analyseTapped() {
-        let aiVC = AIAnalyzingViewController()
-        aiVC.modalPresentationStyle = .fullScreen
-        present(aiVC, animated: true)
+        let aiVC = InsightAIAnalysisViewController(insight: insight)
+        navigationController?.pushViewController(aiVC, animated: true)
     }
 } 

@@ -9,7 +9,7 @@ import UIKit
 
 class ModalAddInsightViewController: UIViewController {
     
-    var onDone: (() -> Void)?
+    var onDone: ((Insight) -> Void)?
     
     lazy var navBar: UINavigationBar = {
         var navBar = UINavigationBar()
@@ -181,7 +181,7 @@ class ModalAddInsightViewController: UIViewController {
             priority: priority,
             audience: audience,
             executionEffort: effort,
-            bugdet: budget
+            budget: budget
         )
 
         InsightPersistence.saveInsight(newInsight: newInsight)
@@ -193,7 +193,7 @@ class ModalAddInsightViewController: UIViewController {
         }
         
         dismiss(animated: true) {
-            self.onDone?()
+            self.onDone?(newInsight)
         }
     }
 

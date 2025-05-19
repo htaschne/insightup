@@ -83,7 +83,7 @@ extension PropertiesSelector: UITableViewDataSource {
         if indexPath.row < items.count - 1 {
             if cell.contentView.viewWithTag(999) == nil {
                 let divider = UIView()
-                divider.backgroundColor = UIColor.systemGray5
+                divider.backgroundColor = .graysGray6
                 divider.translatesAutoresizingMaskIntoConstraints = false
                 divider.tag = 999
                 cell.contentView.addSubview(divider)

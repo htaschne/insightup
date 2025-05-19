@@ -5,6 +5,8 @@
 //  Created by Agatha Schneider on 12/05/25.
 //
 
+//dkjsadkaskdsalk
+
 import UIKit
 
 class HomeViewController: UIViewController, UISearchBarDelegate {
@@ -93,8 +95,25 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
     @objc func modalButtonTapped() {
         let modalVC = ModalAddInsightViewController()
         modalVC.modalPresentationStyle = .automatic
+        modalVC.onDone = { [weak self] newInsight in
+            guard let self = self else { return }
+            let loadingVC = AIAnalyzingViewController()
+            loadingVC.modalPresentationStyle = .fullScreen
+            self.present(loadingVC, animated: true) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                    loadingVC.dismiss(animated: true) {
+                        let aiVC = InsightAIAnalysisViewController(insight: newInsight)
+                        if let nav = self.navigationController {
+                            nav.pushViewController(aiVC, animated: true)
+                        } else {
+                            let nav = UINavigationController(rootViewController: aiVC)
+                            self.present(nav, animated: true)
+                        }
+                    }
+                }
+            }
+        }
         present(modalVC, animated: true)
-
     }
 
     @objc func profileTapped() {
@@ -109,15 +128,14 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
             title: "Polls in stories get the most replies",
             notes: "Interactive content significantly boosts user engagement compared to traditional static posts. It encourages participation and fosters a deeper connection with the audience, making the experience more dynamic and enjoyable.",
             category: .Observations,
-            priority: .Low,
-            audience: .B2B,
-            impact: .Low,
-            executionEffort: .Solo,
-            budget: .LessThan100
+            priority: Category.Low,
+            audience: TargetAudience.B2B,
+            executionEffort: Effort.Solo,
+            budget: Budget.LessThan100
         )
         let detailVC = InsightDetailViewController(insight: mockInsight)
         let nav = UINavigationController(rootViewController: detailVC)
-        nav.modalPresentationStyle = .fullScreen
+        nav.modalPresentationStyle = UIModalPresentationStyle.fullScreen
         self.present(nav, animated: true)
     }
 
