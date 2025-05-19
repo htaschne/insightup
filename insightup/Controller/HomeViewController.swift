@@ -82,6 +82,20 @@ class HomeViewController: UIViewController {
     @objc func modalButtonTapped() {
         let modalVC = ModalAddInsightViewController()
         modalVC.modalPresentationStyle = .automatic
+        
+        modalVC.onDone = { [weak self] in
+            guard let self = self else { return }
+            
+            self.insights = InsightPersistence.getAll().insights
+            self.filteredInsights = self.insights
+            self.tableView.reloadData()
+            
+            self.homeView.ideasButton.updateCounter()
+            self.homeView.problemsButton.updateCounter()
+            self.homeView.feelingsButton.updateCounter()
+            self.homeView.observationsButton.updateCounter()
+            self.homeView.allButton.updateCounter()
+        }
         present(modalVC, animated: true)
 
     }

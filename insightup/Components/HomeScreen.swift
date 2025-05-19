@@ -98,7 +98,6 @@ class HomeScreenView: UIView {
         return stackView
     }()
 
-
     lazy var bottomButtonsStackView: UIStackView = {
         var stackView = UIStackView(arrangedSubviews: [
             feelingsButton, observationsButton,
