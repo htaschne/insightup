@@ -95,23 +95,19 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
     @objc func modalButtonTapped() {
         let modalVC = ModalAddInsightViewController()
         modalVC.modalPresentationStyle = .automatic
-        modalVC.onDone = { [weak self] newInsight in
+        
+        modalVC.onDone = { [weak self] in
             guard let self = self else { return }
-            let loadingVC = AIAnalyzingViewController()
-            loadingVC.modalPresentationStyle = .fullScreen
-            self.present(loadingVC, animated: true) {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-                    loadingVC.dismiss(animated: true) {
-                        let aiVC = InsightAIAnalysisViewController(insight: newInsight)
-                        if let nav = self.navigationController {
-                            nav.pushViewController(aiVC, animated: true)
-                        } else {
-                            let nav = UINavigationController(rootViewController: aiVC)
-                            self.present(nav, animated: true)
-                        }
-                    }
-                }
-            }
+            
+            self.insights = InsightPersistence.getAll().insights
+            self.filteredInsights = self.insights
+            self.tableView.reloadData()
+            
+            self.homeView.ideasButton.updateCounter()
+            self.homeView.problemsButton.updateCounter()
+            self.homeView.feelingsButton.updateCounter()
+            self.homeView.observationsButton.updateCounter()
+            self.homeView.allButton.updateCounter()
         }
         present(modalVC, animated: true)
     }

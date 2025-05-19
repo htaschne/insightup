@@ -15,7 +15,8 @@ class CardCategoryComponent: UIView {
     private let title = UILabel()
     private let iconCounterStack = UIStackView()
     private let fullStack = UIStackView()
-
+    private let category: InsightCategory
+    
     var counterValue: String? {
         didSet {
             counter.text = counterValue
@@ -23,10 +24,12 @@ class CardCategoryComponent: UIView {
     }
 
     init(category: InsightCategory) {
+        self.category = category
         super.init(frame: .zero)
         setupViews()
         configure(with: category)
         setup()
+        updateCounter()
     }
 
     required init?(coder: NSCoder) {
@@ -38,9 +41,9 @@ class CardCategoryComponent: UIView {
         iconBackgroundView.translatesAutoresizingMaskIntoConstraints = false
         iconBackgroundView.layer.cornerRadius = 17
         iconBackgroundView.clipsToBounds = true
-        iconBackgroundView.widthAnchor.constraint(equalToConstant: 34)
+        iconBackgroundView.widthAnchor.constraint(equalToConstant: 32)
             .isActive = true
-        iconBackgroundView.heightAnchor.constraint(equalToConstant: 34)
+        iconBackgroundView.heightAnchor.constraint(equalToConstant: 32)
             .isActive = true
 
         // Icon
@@ -90,6 +93,19 @@ class CardCategoryComponent: UIView {
 
         backgroundColor = UIColor(named: "BackgroundsPrimary") ?? .red
         layer.cornerRadius = 12
+    }
+    
+    func updateCounter() {
+        let allInsights = InsightPersistence.getAll().insights
+        
+        let matchingCount: Int
+        if category == .All {
+            matchingCount = allInsights.count
+        } else {
+            matchingCount = allInsights.filter { $0.category == category }.count
+        }
+        
+        self.counterValue = "\(matchingCount)"
     }
 
     private func configure(with category: InsightCategory) {
