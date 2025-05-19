@@ -10,6 +10,7 @@ import UIKit
 class ModalAddInsightViewController: UIViewController {
     
     var onDone: (() -> Void)?
+    weak var delegate: ModalAddInsightDelegate?
     
     lazy var navBar: UINavigationBar = {
         var navBar = UINavigationBar()
@@ -192,6 +193,7 @@ class ModalAddInsightViewController: UIViewController {
             print("🧠 [\(index)] \(insight.title) – Categoria: \(insight.category.rawValue)")
         }
         
+        delegate?.didAddInsight()
         dismiss(animated: true) {
             self.onDone?()
         }
