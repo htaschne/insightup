@@ -22,7 +22,7 @@ class OnboardingContentViewController: UIViewController {
         label.font = .systemFont(ofSize: 17, weight: .regular)
         label.textAlignment = .left
         label.numberOfLines = 0
-        label.tintColor = .labelsSecondary
+        label.textColor = .labelsSecondary
         return label
     }()
     
@@ -43,7 +43,9 @@ class OnboardingContentViewController: UIViewController {
         
         tableView.backgroundColor = .clear
         tableView.backgroundView = nil
-        tableView.widthAnchor.constraint(equalToConstant: 348).isActive = true
+        
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.estimatedRowHeight = 60
         
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "OptionCell")
         return tableView
@@ -52,7 +54,7 @@ class OnboardingContentViewController: UIViewController {
     private let optionsStack: UIStackView = {
       let stack = UIStackView()
       stack.axis = .vertical
-      stack.spacing = 12
+      stack.spacing = 16
       stack.translatesAutoresizingMaskIntoConstraints = false
       return stack
     }()
@@ -66,6 +68,13 @@ class OnboardingContentViewController: UIViewController {
         btn.layer.cornerRadius = 8
         btn.translatesAutoresizingMaskIntoConstraints = false
         return btn
+    }()
+    
+    private let infoImageView: UIImageView = {
+      let iv = UIImageView()
+      iv.contentMode = .scaleAspectFit
+      iv.translatesAutoresizingMaskIntoConstraints = false
+      return iv
     }()
 
     // MARK: Data for singleChoice
@@ -113,6 +122,8 @@ class OnboardingContentViewController: UIViewController {
         
         preselected.forEach { selectOption(at: $0) }
 
+        optionsTable.rowHeight = 60
+        optionsTable.estimatedRowHeight = 60
     }
     
     private func selectOption(at index: Int) {
@@ -126,13 +137,18 @@ class OnboardingContentViewController: UIViewController {
     private func configureOptions(for type: OnboardingPageType) {
       optionsTable.isHidden = true
       optionsStack.isHidden = true
+      infoImageView.isHidden = true
         
       optionsStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
       selectedIndex = nil
         
       switch type {
       case .info:
-        break
+          infoImageView.isHidden = false
+          skipButton.isHidden = true
+          if let name = page.imageName {
+              infoImageView.image = UIImage(named: name)
+          }
 
       case .singleChoice(let options, let onSelect):
         self.singleTitles     = options.map { $0.title }
@@ -144,34 +160,29 @@ class OnboardingContentViewController: UIViewController {
         optionsTable.reloadData()
 
       case .multiChoice(let options, let onSelect):
-        // 3) Show the stack, hide the table
-        optionsStack.isHidden = false
-        optionsTable.isHidden = true
-        multiOnSelect = onSelect
-        
-        // 4) Divide em linhas de 2 colunas
-        let columns = 2
-        let rowCount = Int(ceil(Double(options.count) / Double(columns)))
-        for rowIndex in 0..<rowCount {
-          let rowStack = UIStackView()
-          rowStack.axis = .horizontal
-          rowStack.distribution = .fillEqually
-          rowStack.spacing = 12
-          rowStack.translatesAutoresizingMaskIntoConstraints = false
-          
-          for colIndex in 0..<columns {
-            let globalIndex = rowIndex * columns + colIndex
-            guard globalIndex < options.count else { break }
-            let title = options[globalIndex]
-            let btn = makeOptionButton(text: title, tag: globalIndex, single: false)
-            rowStack.addArrangedSubview(btn)
-          }
-          
-          optionsStack.addArrangedSubview(rowStack)
-        }
-        
+          optionsStack.isHidden = false
+          optionsTable.isHidden = true
+          multiOnSelect = onSelect
 
-          
+          let columns = options.count > 6 ? 2 : 1
+          let rowCount = Int(ceil(Double(options.count) / Double(columns)))
+
+          for row in 0..<rowCount {
+              let rowStack = UIStackView()
+              rowStack.axis = .horizontal
+              rowStack.distribution = .fillEqually
+              rowStack.spacing = 12
+
+              for col in 0..<columns {
+                  let idx = row * columns + col
+                  guard idx < options.count else { break }
+                  let btn = makeOptionButton(text: options[idx], tag: idx, single: false)
+                  rowStack.addArrangedSubview(btn)
+              }
+
+              optionsStack.addArrangedSubview(rowStack)
+          }
+
       }
     }
     
@@ -180,11 +191,9 @@ class OnboardingContentViewController: UIViewController {
       b.setTitle(text, for: .normal)
       b.titleLabel?.font = .systemFont(ofSize: 15, weight: .regular)
       
-      // alinhamento centro e padding interno
       b.contentHorizontalAlignment = .center
       b.heightAnchor.constraint(equalToConstant: 42).isActive = true
       
-      // aparência padrão (não selecionado)
       b.backgroundColor = .white
       b.setTitleColor(.label, for: .normal)
       b.layer.cornerRadius = 10
@@ -211,7 +220,6 @@ class OnboardingContentViewController: UIViewController {
     @objc private func handleOptionTap(_ sender: UIButton) {
         switch page.type {
         case .singleChoice(_, let onSelect):
-            // Desmarca todos
             optionsStack.arrangedSubviews
                 .compactMap { $0 as? UIStackView }
                 .flatMap { $0.arrangedSubviews }
@@ -220,17 +228,14 @@ class OnboardingContentViewController: UIViewController {
                     $0.isSelected = false
                     updateButtonStyle($0)
                 }
-            // Marca o selecionado
             sender.isSelected = true
             updateButtonStyle(sender)
             onSelect(sender.tag)
 
         case .multiChoice(_, let onSelect):
-            // Alterna seleção
             sender.isSelected.toggle()
             updateButtonStyle(sender)
 
-            // Coleta índices marcados
             let selected = optionsStack.arrangedSubviews
                 .compactMap { $0 as? UIStackView }
                 .flatMap { $0.arrangedSubviews }
@@ -269,17 +274,32 @@ extension OnboardingContentViewController: UITableViewDataSource, UITableViewDel
     return singleTitles.count
   }
 
-  func tableView(_ tv: UITableView, cellForRowAt ip: IndexPath) -> UITableViewCell {
-    let cell = tv.dequeueReusableCell(withIdentifier: "OptionCell", for: ip)
-    var c = UIListContentConfiguration.subtitleCell()
-    c.text         = singleTitles[ip.row]
-    c.secondaryText = singleSubtitles[ip.row]
-    cell.contentConfiguration = c
-    cell.accessoryType = (ip.row == selectedIndex)
-      ? .checkmark
-      : .none
-    return cell
-  }
+    func tableView(_ tv: UITableView, cellForRowAt ip: IndexPath) -> UITableViewCell {
+        let cell = tv.dequeueReusableCell(withIdentifier: "OptionCell", for: ip)
+        
+        var config = UIListContentConfiguration.subtitleCell()
+        
+        config.text = singleTitles[ip.row]
+        config.textProperties.font = .systemFont(ofSize: 17, weight: .regular)
+        config.textProperties.numberOfLines = 0
+        
+        config.secondaryText = singleSubtitles[ip.row]
+        config.secondaryTextProperties.font = .systemFont(ofSize: 15, weight: .regular)
+        config.secondaryTextProperties.color = .labelsSecondary
+        
+        let symbol = (ip.row == selectedIndex)
+        ? "checkmark.circle.fill"
+          : "circle"
+        config.image = UIImage(systemName: symbol)
+        config.imageProperties.tintColor = .colorsBlue
+        config.imageToTextPadding = 12
+        
+        cell.contentConfiguration = config
+        cell.accessoryType = .none
+        
+        return cell
+    }
+
 
   func tableView(_ tv: UITableView, didSelectRowAt ip: IndexPath) {
     selectedIndex = ip.row
@@ -292,6 +312,7 @@ extension OnboardingContentViewController: ViewCodeProtocol {
     func addSubviews() {
         [titleLabel,
          descriptionLabel,
+         infoImageView,
          actionButton,
          optionsTable,
          optionsStack,
@@ -309,13 +330,16 @@ extension OnboardingContentViewController: ViewCodeProtocol {
     
     func addConstraints() {
         NSLayoutConstraint.activate([
-                    titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 120),
-                    titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 27),
-                    titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -27),
+                    titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 160),
+                    titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 30),
+                    titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -30),
 
-                    descriptionLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 16),
+                    descriptionLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8),
                     descriptionLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
                     descriptionLabel.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor),
+                    
+                    infoImageView.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 64),
+                    infoImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
 
                     actionButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -116),
                     actionButton.heightAnchor.constraint(equalToConstant: 50),
@@ -326,12 +350,12 @@ extension OnboardingContentViewController: ViewCodeProtocol {
                     skipButton.trailingAnchor.constraint(equalTo: actionButton.trailingAnchor),
                     skipButton.heightAnchor.constraint(equalTo: actionButton.heightAnchor),
                     skipButton.topAnchor.constraint(equalTo: actionButton.bottomAnchor, constant: 16),
-
                     
-                    optionsTable.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 54),
-                    optionsTable.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                    optionsTable.trailingAnchor.constraint(equalTo: descriptionLabel.trailingAnchor),
+                    optionsTable.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 40),
+                    optionsTable.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+                    optionsTable.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
                     optionsTable.bottomAnchor.constraint(equalTo: actionButton.topAnchor, constant: -50),
+
                     
                     optionsStack.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 64),
                     optionsStack.leadingAnchor.constraint(equalTo: descriptionLabel.leadingAnchor),

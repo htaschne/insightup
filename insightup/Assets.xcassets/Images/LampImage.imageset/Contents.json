@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "Frame 62.png",
+      "filename" : "InsightIcon.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "Frame 62@2x.png",
+      "filename" : "InsightIcon@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "Frame 62@3x.png",
+      "filename" : "InsightIcon@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
