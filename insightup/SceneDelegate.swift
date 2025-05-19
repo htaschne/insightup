@@ -18,15 +18,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
-        window = UIWindow(windowScene: windowScene)
+        let vc = HomeViewController()
+        let navigationController = UINavigationController(rootViewController: vc)
         
-        if let saved = UserDefaults.standard.loadOnboarding() {
-            window?.rootViewController = HomeViewController()
-            // passar os dados do onboarding
-            // passo 3
-        } else {
-            window?.rootViewController = OnboardingContainerViewController()
-        }
+        window = UIWindow(windowScene: windowScene)
+        window?.rootViewController = navigationController
         
         window?.makeKeyAndVisible()
     }
