@@ -52,6 +52,18 @@ class PropertiesSelector: UIView {
         let totalHeight = CGFloat(items.count) * tableView.rowHeight
         self.heightAnchor.constraint(equalToConstant: totalHeight).isActive = true
     }
+    
+    func getValue(for title: String) -> String? {
+        for i in 0..<items.count {
+            if items[i].title == title,
+               let cell = tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SelectorCell {
+                return cell.btnCategory.configuration?.title
+            }
+        }
+        return nil
+    }
+
+
 }
 
 extension PropertiesSelector: UITableViewDataSource {

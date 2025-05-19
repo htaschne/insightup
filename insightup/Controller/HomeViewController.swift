@@ -91,16 +91,8 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
     }
     
     @objc func modalButtonTapped() {
-        
         let modalVC = ModalAddInsightViewController()
         modalVC.modalPresentationStyle = .automatic
-        
-//        modalVC.onDone = { [weak self] in
-//            guard let self = self else { return }
-//            self.database = Persistence.getDataBase()
-//            tableView.reloadData()
-//        }
-
         present(modalVC, animated: true)
 
     }

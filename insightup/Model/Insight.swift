@@ -30,19 +30,19 @@ enum InsightCategory: String, Codable, CaseIterable {
     }
 }
 
-enum Category: String, Codable {
+enum Category: String, Codable, CaseIterable {
     case High, Medium, Low, None
 }
 
-enum TargetAudience: String, Codable {
+enum TargetAudience: String, Codable, CaseIterable {
     case B2B, B2C, B2B2C, B2E, B2G, C2C, D2D
 }
 
-enum Budget: String, Codable {
+enum Budget: String, Codable, CaseIterable {
     case LessThan100, Between100And500, Between500And1000, MoreThan1000
 }
 
-enum Effort: String, Codable {
+enum Effort: String, Codable, CaseIterable {
     case Solo, With1, With2to4, CrossTeam, ExternalHelp
 }
 
@@ -53,7 +53,7 @@ struct Insight: Codable {
     var category: InsightCategory
     var priority: Category
     var audience: TargetAudience
-    var impact: Category
+//    var impact: Category
     var executionEffort: Effort
     var budget: Budget
 }
