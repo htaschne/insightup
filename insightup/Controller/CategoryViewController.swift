@@ -12,6 +12,7 @@ class CategoryViewController: UIViewController {
     // MARK: Variables
     private var insights: [String] = []
     private var filteredInsights: [String] = []
+    private var tableViewHeightConstraint: NSLayoutConstraint?
 
     var category: InsightCategory?
     init(category: InsightCategory) {
@@ -37,16 +38,14 @@ class CategoryViewController: UIViewController {
     private lazy var insightsTableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.register(
-            UITableViewCell.self,
-            forCellReuseIdentifier: "ObservationCell"
-        )
+        tableView.register(InsightCell.self, forCellReuseIdentifier: InsightCell.reuseIdentifier)
         tableView.rowHeight = 44
         tableView.separatorInset = .zero
         tableView.tableFooterView = UIView()
         tableView.layer.cornerRadius = 8
         tableView.dataSource = self
         tableView.delegate = self
+        tableView.separatorStyle = .none
         return tableView
     }()
 
@@ -111,6 +110,7 @@ class CategoryViewController: UIViewController {
         filteredInsights = insights
         insightsTableView.reloadData()
         updateEmptyStateVisibility()
+        updateTableViewHeight()
     }
 
     // MARK: Initialization
@@ -118,7 +118,7 @@ class CategoryViewController: UIViewController {
         super.viewDidLoad()
         setup()
 
-        view.backgroundColor = .backgroundsGroupedPrimary
+        view.backgroundColor = UIColor(named: "BackgroundsPrimary")
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.title = category?.rawValue
         navigationItem.searchController = searchController
@@ -131,7 +131,7 @@ class CategoryViewController: UIViewController {
         // MARK: Custominzação da navigation bar
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = .backgroundsTertiary
+        appearance.backgroundColor = UIColor(named: "BackgroundsPrimary")
 
         guard let category else { return }
         appearance.titleTextAttributes = [
@@ -156,6 +156,11 @@ class CategoryViewController: UIViewController {
         emptyState.isHidden = !isEmpty
         insightsTableView.isHidden = isEmpty
     }
+    
+    private func updateTableViewHeight() {
+        insightsTableView.layoutIfNeeded()
+        tableViewHeightConstraint?.constant = insightsTableView.contentSize.height
+    }
 }
 
 // MARK: Protocols
@@ -172,6 +177,7 @@ extension CategoryViewController: UISearchResultsUpdating, UISearchBarDelegate {
         }
         updateEmptyStateVisibility()
         insightsTableView.reloadData()
+        updateTableViewHeight()
     }
 
     @objc func searchBar(
@@ -190,16 +196,20 @@ extension CategoryViewController: UITableViewDataSource, UITableViewDelegate {
         return filteredInsights.count
     }
 
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath)
-        -> UITableViewCell
-    {
-        let cell = tableView.dequeueReusableCell(
-            withIdentifier: "ObservationCell",
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: InsightCell.reuseIdentifier,
             for: indexPath
-        )
-        cell.textLabel?.text = filteredInsights[indexPath.row]
+        ) as? InsightCell else {
+            return UITableViewCell()
+        }
+
+        let title = filteredInsights[indexPath.row]
+        let isLast = indexPath.row == filteredInsights.count - 1
+        cell.configure(with: title, isLast: isLast)
         return cell
     }
+
 
     func tableView(
         _ tableView: UITableView,
@@ -218,6 +228,7 @@ extension CategoryViewController: ViewCodeProtocol {
     }
 
     func addConstraints() {
+
         NSLayoutConstraint.activate([
             emptyState.leadingAnchor.constraint(
                 equalTo: view.leadingAnchor,
@@ -242,11 +253,7 @@ extension CategoryViewController: ViewCodeProtocol {
                 equalTo: view.safeAreaLayoutGuide.topAnchor,
                 constant: 16
             ),
-            insightsTableView.bottomAnchor.constraint(
-                equalTo: addInsightButton.topAnchor,
-                constant: -8
-            ),
-
+            
             addInsightButton.leadingAnchor.constraint(
                 equalTo: view.leadingAnchor,
                 constant: 16
@@ -262,6 +269,10 @@ extension CategoryViewController: ViewCodeProtocol {
             addInsightButton.heightAnchor.constraint(equalToConstant: 48),
 
         ])
+        
+        tableViewHeightConstraint = insightsTableView.heightAnchor.constraint(equalToConstant: 0)
+        tableViewHeightConstraint?.isActive = true
+        
     }
 
 }
