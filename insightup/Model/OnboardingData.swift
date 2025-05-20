@@ -19,4 +19,5 @@ struct OnboardingData: Codable {
     var routine: WeeklyRoutine?
     var interests: [Interest] = []
     var mainGoals: [MainGoal] = []
+    var isComplete: Bool = false
 }

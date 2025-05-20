@@ -92,6 +92,8 @@ class OnboardingContentViewController: UIViewController {
     let page : OnboardingPage
     var buttonAction: (() -> Void)?
     var preselected: [Int] = []
+    
+    var skipAction: (() -> Void)?
 
     // MARK: Init
     init(page: OnboardingPage) {
@@ -264,7 +266,7 @@ class OnboardingContentViewController: UIViewController {
     }
     
     @objc private func handleSkipButton() {
-        buttonAction?()
+        skipAction?()
     }
 
 }
