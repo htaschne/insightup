@@ -6,13 +6,13 @@
 //
 
 struct OnboardingData: Codable {
-    enum WeeklyRoutine: String, Codable {
+    enum WeeklyRoutine: String, Codable, CaseIterable {
         case onlyWeekends, someWeekHours, fewFreeDays, plentyFreeTime
     }
-    enum Interest: String, Codable {
+    enum Interest: String, Codable, CaseIterable {
         case business, health, technology, education, art, finance, personalDevelopment, others
     }
-    enum MainGoal: String, Codable {
+    enum MainGoal: String, Codable, CaseIterable {
         case solveProblems, generateIdeas, organizeThoughts, developProjects, improveProductivity
     }
     

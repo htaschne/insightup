@@ -47,6 +47,7 @@ enum Effort: String, Codable, CaseIterable {
     case Solo, With1, With2to4, CrossTeam, ExternalHelp
 }
 
+
 struct Insight: Codable {
     var id: UUID = UUID()
     var title: String

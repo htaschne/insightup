@@ -11,6 +11,15 @@ class HomeViewController: UIViewController {
 
     private var insights: [Insight] = []
     private var filteredInsights: [Insight] = []
+    
+    private lazy var buttonProfile: UIBarButtonItem = {
+        UIBarButtonItem(
+            image: UIImage(systemName: "person.circle.fill"),
+            style: .plain,
+            target: self,
+            action: #selector(profileButtonTapped)
+        )
+    }()
 
     private lazy var searchController: UISearchController = {
         let searchController = UISearchController()
@@ -69,6 +78,7 @@ class HomeViewController: UIViewController {
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.title = "InsightUp"
         navigationItem.searchController = searchController
+        navigationItem.rightBarButtonItem = buttonProfile
 
         // search bar setup
         // TODO(Agatha): make this initialization better
@@ -99,6 +109,11 @@ class HomeViewController: UIViewController {
         present(modalVC, animated: true)
 
     }
+    
+    @objc func profileButtonTapped() {
+        let profileVC = ProfileViewController()
+        navigationController?.pushViewController(profileVC, animated: true)
+    }
 
 }
 
@@ -113,6 +128,7 @@ extension HomeViewController: ViewCodeProtocol {
 
     func addConstraints() {
         NSLayoutConstraint.activate([
+                        
             homeView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             homeView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             homeView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
