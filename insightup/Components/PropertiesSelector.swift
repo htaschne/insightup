@@ -63,6 +63,16 @@ class PropertiesSelector: UIView {
         return nil
     }
 
+    func setSelectedValue(_ value: String, for title: String) {
+        for i in 0..<items.count {
+            if items[i].title == title,
+               let cell = tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SelectorCell {
+                var config = cell.btnCategory.configuration ?? UIButton.Configuration.plain()
+                config.title = value
+                cell.btnCategory.configuration = config
+            }
+        }
+    }
 
 }
 

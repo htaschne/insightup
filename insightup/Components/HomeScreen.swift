@@ -30,6 +30,7 @@ class HomeScreenView: UIView {
         highPriorityTableView.isHidden = topInsights.isEmpty
         priorityLabel.isHidden = topInsights.isEmpty
         highPriorityTableView.reloadData()
+        updateCategoryCounters()
     }
 
     init(navigationController: UINavigationController) {
@@ -277,6 +278,14 @@ class HomeScreenView: UIView {
             addInsightButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
             addInsightButton.heightAnchor.constraint(equalToConstant: 50),
         ])
+    }
+
+    public func updateCategoryCounters() {
+        ideasButton.updateCounter()
+        problemsButton.updateCounter()
+        feelingsButton.updateCounter()
+        observationsButton.updateCounter()
+        allButton.updateCounter()
     }
 
 }

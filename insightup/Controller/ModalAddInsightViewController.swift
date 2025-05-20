@@ -12,6 +12,7 @@ class ModalAddInsightViewController: UIViewController {
     
     var onDone: ((Insight) -> Void)?
     weak var delegate: ModalAddInsightDelegate?
+    private var editingInsight: Insight?
     
     lazy var navBar: UINavigationBar = {
         var navBar = UINavigationBar()
@@ -127,11 +128,27 @@ class ModalAddInsightViewController: UIViewController {
         return stackView
     }()
 
+    init(insight: Insight? = nil) {
+        self.editingInsight = insight
+        super.init(nibName: nil, bundle: nil)
+    }
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
-
         view.backgroundColor = UIColor(named: "BackgroundsPrimary")
         setup()
+        if let insight = editingInsight {
+            titleTextField.text = insight.title
+            notesTextView.text = insight.notes
+            componentCategory.setSelectedValue(insight.category.rawValue, for: "Category")
+            componentDetails.setSelectedValue(insight.priority.rawValue, for: "Priority")
+            componentDetails.setSelectedValue(insight.audience.rawValue, for: "Audience")
+            componentDetails.setSelectedValue(insight.executionEffort.rawValue, for: "Execution Effort")
+            componentDetails.setSelectedValue(insight.budget.rawValue, for: "Budget")
+        }
     }
     
     @objc func handleCancel() {
@@ -143,40 +160,18 @@ class ModalAddInsightViewController: UIViewController {
             print("Título é obrigatório.")
             return
         }
-
         let notes = notesTextView.text ?? ""
-
-        guard let selectedCategoryString = componentCategory.getValue(for: "Category"),
-              let selectedCategory = InsightCategory(rawValue: selectedCategoryString) else {
-            print("Categoria inválida.")
-            return
-        }
-
-        guard let priorityString = componentDetails.getValue(for: "Priority"),
-              let priority = Category(rawValue: priorityString) else {
-            print("Prioridade inválida.")
-            return
-        }
-
-        guard let audienceString = componentDetails.getValue(for: "Audience"),
-              let audience = TargetAudience(rawValue: audienceString) else {
-            print("Público inválido.")
-            return
-        }
-        
-        guard let effortString = componentDetails.getValue(for: "Execution Effort"),
-              let effort = Effort(rawValue: effortString) else {
-            print("Esforço inválido.")
-            return
-        }
-
-        guard let budgetString = componentDetails.getValue(for: "Budget"),
-              let budget = Budget(rawValue: budgetString) else {
-            print("Orçamento inválido.")
-            return
-        }
-
-        let newInsight = Insight(
+        let selectedCategoryString = componentCategory.getValue(for: "Category")
+        let selectedCategory = InsightCategory(rawValue: selectedCategoryString ?? "None") ?? .All
+        let priorityString = componentDetails.getValue(for: "Priority")
+        let priority = Category(rawValue: priorityString ?? "None") ?? .None
+        let audienceString = componentDetails.getValue(for: "Audience")
+        let audience = TargetAudience(rawValue: audienceString ?? "B2B") ?? .B2B
+        let effortString = componentDetails.getValue(for: "Execution Effort")
+        let effort = Effort(rawValue: effortString ?? "Solo") ?? .Solo
+        let budgetString = componentDetails.getValue(for: "Budget")
+        let budget = Budget(rawValue: budgetString ?? "LessThan100") ?? .LessThan100
+        var newInsight = Insight(
             title: title,
             notes: notes,
             category: selectedCategory,
@@ -185,15 +180,13 @@ class ModalAddInsightViewController: UIViewController {
             executionEffort: effort,
             budget: budget
         )
-
-        InsightPersistence.saveInsight(newInsight: newInsight)
-        
-        let allInsights = InsightPersistence.getAll().insights
-        print("📋 Todos os insights salvos:")
-        for (index, insight) in allInsights.enumerated() {
-            print("🧠 [\(index)] \(insight.title) – Categoria: \(insight.category.rawValue)")
+        if let editing = editingInsight {
+            newInsight.id = editing.id
+            InsightPersistence.updateInsight(updatedInsight: newInsight)
+        } else {
+            InsightPersistence.saveInsight(newInsight: newInsight)
         }
-        
+        NotificationCenter.default.post(name: NSNotification.Name("InsightsDidChange"), object: nil)
         delegate?.didAddInsight()
         dismiss(animated: true) {
             self.onDone?(newInsight)

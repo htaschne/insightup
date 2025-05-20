@@ -38,7 +38,14 @@ class InsightDetailViewController: UIViewController, UIImagePickerControllerDele
     }
 
     @objc private func editTapped() {
-        print("Edit button tapped")
+        let modalVC = ModalAddInsightViewController(insight: insight)
+        modalVC.modalPresentationStyle = .automatic
+        modalVC.onDone = { [weak self] updatedInsight in
+            guard let self = self else { return }
+            self.insight = updatedInsight
+            self.setupContent()
+        }
+        present(modalVC, animated: true)
     }
 
     private func setupScrollView() {
@@ -270,6 +277,11 @@ class InsightDetailViewController: UIViewController, UIImagePickerControllerDele
             let newPriority = selected?.btnCategory.configuration?.title ?? "Low"
             if let newCategory = Category(rawValue: newPriority) {
                 insight.priority = newCategory
+                // Salvar alteração na persistência
+                InsightPersistence.updateInsight(updatedInsight: insight)
+                // Notificar Home para atualizar os cards
+                NotificationCenter.default.post(name: NSNotification.Name("InsightsDidChange"), object: nil)
+                // Atualizar UI
                 setupContent()
             }
         }

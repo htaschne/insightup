@@ -75,6 +75,7 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
 
         setup()
         searchController.delegate = self
+        NotificationCenter.default.addObserver(self, selector: #selector(updateCategoryCounters), name: NSNotification.Name("InsightsDidChange"), object: nil)
     }
     
     @objc func modalButtonTapped() {
@@ -83,15 +84,9 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
         
         modalVC.onDone = { [weak self] _ in
             guard let self = self else { return }
-            
             self.insights = InsightPersistence.getAll().insights
             self.filteredInsights = self.insights
-            
-            self.homeView.ideasButton.updateCounter()
-            self.homeView.problemsButton.updateCounter()
-            self.homeView.feelingsButton.updateCounter()
-            self.homeView.observationsButton.updateCounter()
-            self.homeView.allButton.updateCounter()
+            self.homeView.updateCategoryCounters()
         }
         present(modalVC, animated: true)
     }
@@ -99,6 +94,10 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
     @objc func profileButtonTapped() {
         let profileVC = ProfileViewController()
         navigationController?.pushViewController(profileVC, animated: true)
+    }
+
+    @objc func updateCategoryCounters() {
+        homeView.updateCategoryCounters()
     }
 
     // override func viewDidAppear(_ animated: Bool) {

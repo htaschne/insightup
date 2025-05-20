@@ -59,4 +59,12 @@ public struct InsightPersistence {
     public static func getAllBy(category: InsightCategory) -> [Insight] {
         return category == .All ? getAll().insights : getAll().insights.filter { $0.category == category }
     }
+
+    public static func updateInsight(updatedInsight: Insight) {
+        var insights = getAll().insights
+        if let idx = insights.firstIndex(where: { $0.id == updatedInsight.id }) {
+            insights[idx] = updatedInsight
+            save(insights: Insights(insights: insights))
+        }
+    }
 }
