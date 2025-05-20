@@ -12,6 +12,7 @@ class ModalAddInsightViewController: UIViewController {
     
     var onDone: ((Insight) -> Void)?
     weak var delegate: ModalAddInsightDelegate?
+    private var tableViewHeightConstraint: NSLayoutConstraint?
     
     lazy var navBar: UINavigationBar = {
         var navBar = UINavigationBar()

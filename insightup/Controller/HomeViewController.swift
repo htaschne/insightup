@@ -51,7 +51,7 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
         var homeView = HomeScreenView(navigationController: navigationController)
         homeView.translatesAutoresizingMaskIntoConstraints = false
         homeView.isHidden = false
-        homeView.backgroundColor = UIColor(named: "BackgroundsSecondary")
+        homeView.backgroundColor = UIColor(named: "BackgroundsPrimary")
         homeView.addInsightButton.addTarget(self, action: #selector(modalButtonTapped), for: .touchUpInside)
         return homeView
     }()
