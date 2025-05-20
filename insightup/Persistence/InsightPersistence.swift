@@ -7,10 +7,10 @@
 
 import Foundation
 
-struct InsightPersistence {
+public struct InsightPersistence {
     private static let key = "insightup"
 
-    static func getAll() -> Insights {
+    public static func getAll() -> Insights {
         if let data = UserDefaults.standard.value(forKey: key) as? Data {
             do {
                 let insights = try JSONDecoder().decode(Insights.self, from: data)
@@ -25,7 +25,7 @@ struct InsightPersistence {
         return newInsights
     }
 
-    static func save(insights: Insights) {
+    public static func save(insights: Insights) {
         do {
             let data = try JSONEncoder().encode(insights)
             UserDefaults.standard.setValue(data, forKey: key)
@@ -34,7 +34,7 @@ struct InsightPersistence {
         }
     }
 
-    static func saveInsight(newInsight: Insight) {
+    public static func saveInsight(newInsight: Insight) {
         var insights = getAll()
         insights.insights.append(newInsight)
         do {
@@ -45,7 +45,7 @@ struct InsightPersistence {
         }
     }
 
-    static func deleteInsight(at index: Int) {
+    public static func deleteInsight(at index: Int) {
         var insights = getAll()
         insights.insights.remove(at: index)
         do {
@@ -56,7 +56,7 @@ struct InsightPersistence {
         }
     }
 
-    static func getAllBy(category: InsightCategory) -> [Insight] {
+    public static func getAllBy(category: InsightCategory) -> [Insight] {
         return category == .All ? getAll().insights : getAll().insights.filter { $0.category == category }
     }
 }

@@ -11,3 +11,4 @@ xcuserdata/
 # SwiftPM
 .build/
 build
+insightup/Services/APIKeys.swift

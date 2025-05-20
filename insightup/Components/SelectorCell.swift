@@ -81,15 +81,20 @@ class SelectorCell: UITableViewCell {
             withConfiguration: UIImage.SymbolConfiguration(pointSize: 24, weight: .regular)
         )
 
-        let menuItems = options.map { option in
-            UIAction(title: option) { [weak self] _ in
-                var config = self?.btnCategory.configuration
-                config?.title = option
-                self?.btnCategory.configuration = config
+        if options.isEmpty {
+            // For media buttons (Add Image, Add Audio)
+            btnCategory.isHidden = true
+        } else {
+            btnCategory.isHidden = false
+            let menuItems = options.map { option in
+                UIAction(title: option) { [weak self] _ in
+                    var config = self?.btnCategory.configuration
+                    config?.title = option
+                    self?.btnCategory.configuration = config
+                }
             }
+            btnCategory.menu = UIMenu(title: "", options: [.singleSelection], children: menuItems)
         }
-
-        btnCategory.menu = UIMenu(title: "", options: [.singleSelection], children: menuItems)
     }
 }
 
