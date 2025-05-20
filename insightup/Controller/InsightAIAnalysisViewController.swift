@@ -309,8 +309,8 @@ class InsightAIAnalysisViewController: UIViewController {
         isOverviewSelected = true
         
         UIView.animate(withDuration: 0.3) {
-            self.overviewButton.backgroundColor = .backgroundsTertiary
-            self.overviewButton.setTitleColor(.labelsPrimary, for: .normal)
+            self.overviewButton.backgroundColor = UIColor(named: "BackgroundsTertiary")
+            self.overviewButton.setTitleColor(UIColor(named: "LabelsPrimary"), for: .normal)
             self.detailsButton.backgroundColor = .clear
             self.detailsButton.setTitleColor(.secondaryLabel, for: .normal)
             
@@ -318,7 +318,7 @@ class InsightAIAnalysisViewController: UIViewController {
             self.detailsStack.alpha = 0
             
             // Visual feedback
-            self.overviewButton.layer.shadowColor = UIColor.labelsPrimary.withAlphaComponent(0.2).cgColor
+            self.overviewButton.layer.shadowColor = UIColor(named: "LabelsPrimary")?.withAlphaComponent(0.2).cgColor
             self.overviewButton.layer.shadowOpacity = 0.5
             self.overviewButton.layer.shadowOffset = CGSize(width: 0, height: 2)
             self.overviewButton.layer.shadowRadius = 4
@@ -335,14 +335,14 @@ class InsightAIAnalysisViewController: UIViewController {
         UIView.animate(withDuration: 0.3) {
             self.overviewButton.backgroundColor = .clear
             self.overviewButton.setTitleColor(.secondaryLabel, for: .normal)
-            self.detailsButton.backgroundColor = .backgroundsTertiary
-            self.detailsButton.setTitleColor(.labelsPrimary, for: .normal)
+            self.detailsButton.backgroundColor = UIColor(named: "BackgroundsTertiary")
+            self.detailsButton.setTitleColor(UIColor(named: "LabelsPrimary"), for: .normal)
             
             self.overviewStack.alpha = 0
             self.detailsStack.alpha = 1
             
             // Visual feedback
-            self.detailsButton.layer.shadowColor = UIColor.labelsPrimary.withAlphaComponent(0.2).cgColor
+            self.detailsButton.layer.shadowColor = UIColor(named: "LabelsPrimary")?.withAlphaComponent(0.2).cgColor
             self.detailsButton.layer.shadowOpacity = 0.5
             self.detailsButton.layer.shadowOffset = CGSize(width: 0, height: 2)
             self.detailsButton.layer.shadowRadius = 4

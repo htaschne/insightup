@@ -26,9 +26,16 @@ class CardCategoryComponent: UIView {
     init(category: InsightCategory) {
         self.category = category
         super.init(frame: .zero)
+        setup()
+        backgroundColor = .white
+        layer.cornerRadius = 16
+        layer.masksToBounds = false
+        layer.shadowColor = UIColor.black.withAlphaComponent(0.08).cgColor
+        layer.shadowOpacity = 1
+        layer.shadowOffset = CGSize(width: 0, height: 2)
+        layer.shadowRadius = 8
         setupViews()
         configure(with: category)
-        setup()
         updateCounter()
     }
 
@@ -90,9 +97,6 @@ class CardCategoryComponent: UIView {
         fullStack.translatesAutoresizingMaskIntoConstraints = false
         fullStack.addArrangedSubview(iconCounterStack)
         fullStack.addArrangedSubview(title)
-
-        backgroundColor = UIColor(named: "BackgroundsPrimary") ?? .red
-        layer.cornerRadius = 12
     }
     
     func updateCounter() {

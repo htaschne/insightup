@@ -10,8 +10,8 @@ import UIKit
 class CategoryViewController: UIViewController {
 
     // MARK: Variables
-    private var insights: [String] = []
-    private var filteredInsights: [String] = []
+    private var insights: [Insight] = []
+    private var filteredInsights: [Insight] = []
 
     var category: InsightCategory?
     init(category: InsightCategory) {
@@ -106,8 +106,7 @@ class CategoryViewController: UIViewController {
     private func loadInsights() {
         guard let category else { return }
         let allInsights = InsightPersistence.getAllBy(category: category)
-
-        insights = allInsights.map { $0.title }
+        insights = allInsights
         filteredInsights = insights
         insightsTableView.reloadData()
         updateEmptyStateVisibility()
@@ -118,7 +117,7 @@ class CategoryViewController: UIViewController {
         super.viewDidLoad()
         setup()
 
-        view.backgroundColor = .backgroundsGroupedPrimary
+        view.backgroundColor = UIColor(named: "BackgroundsPrimary")
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.title = category?.rawValue
         navigationItem.searchController = searchController
@@ -131,7 +130,7 @@ class CategoryViewController: UIViewController {
         // MARK: Custominzação da navigation bar
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = .backgroundsTertiary
+        appearance.backgroundColor = UIColor(named: "BackgroundsPrimary")
 
         guard let category else { return }
         appearance.titleTextAttributes = [
@@ -167,7 +166,7 @@ extension CategoryViewController: UISearchResultsUpdating, UISearchBarDelegate {
             filteredInsights = insights
         } else {
             filteredInsights = insights.filter {
-                $0.localizedCaseInsensitiveContains(text)
+                $0.title.localizedCaseInsensitiveContains(text)
             }
         }
         updateEmptyStateVisibility()
@@ -197,7 +196,8 @@ extension CategoryViewController: UITableViewDataSource, UITableViewDelegate {
             withIdentifier: "ObservationCell",
             for: indexPath
         )
-        cell.textLabel?.text = filteredInsights[indexPath.row]
+        let insight = filteredInsights[indexPath.row]
+        cell.textLabel?.text = insight.title
         return cell
     }
 
@@ -206,7 +206,9 @@ extension CategoryViewController: UITableViewDataSource, UITableViewDelegate {
         didSelectRowAt indexPath: IndexPath
     ) {
         tableView.deselectRow(at: indexPath, animated: true)
-        print("Tapped:", filteredInsights[indexPath.row])
+        let selectedInsight = filteredInsights[indexPath.row]
+        let detailVC = InsightDetailViewController(insight: selectedInsight)
+        navigationController?.pushViewController(detailVC, animated: true)
     }
 }
 
