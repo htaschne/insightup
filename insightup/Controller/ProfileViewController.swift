@@ -103,17 +103,17 @@ class ProfileViewController: UIViewController {
             PropertyItem(
                     title: "Weekly Routine",
                     iconName: "calendar",
-                    options: OnboardingData.WeeklyRoutine.allCases.map { $0.rawValue }
+                    options: OnboardingData.WeeklyRoutine.allCases.map {$0.description}
                 ),
                 PropertyItem(
                     title: "Areas of Interest",
                     iconName: "text.book.closed.fill",
-                    options: OnboardingData.Interest.allCases.map { $0.rawValue }
+                    options: OnboardingData.Interest.allCases.map { $0.description }
                 ),
                 PropertyItem(
                     title: "Main Goal",
                     iconName: "checkmark.seal.fill",
-                    options: OnboardingData.MainGoal.allCases.map { $0.rawValue }
+                    options: OnboardingData.MainGoal.allCases.map { $0.description }
                 )
         ])
         return component
@@ -143,6 +143,7 @@ class ProfileViewController: UIViewController {
         navigationItem.largeTitleDisplayMode = .never
         navigationController?.navigationBar.prefersLargeTitles = false
         navigationItem.title = "Profile"
+        navigationItem.backButtonTitle = "Back"
         navigationController?.navigationBar.backgroundColor = UIColor(named: "BackgroundsTertiary")
         
         let appearance = UINavigationBarAppearance()

@@ -85,6 +85,7 @@ class ModalAddInsightViewController: UIViewController {
     lazy var componentCategory: PropertiesSelector = {
         var component = PropertiesSelector()
         component.translatesAutoresizingMaskIntoConstraints = false
+        component.tableView.separatorStyle = .none
         component.configure(with:[
             PropertyItem(title: "Category", iconName: "tag.fill", options: ["Ideas", "Problems", "Feelings", "Observations"])
         ])
@@ -223,8 +224,8 @@ extension ModalAddInsightViewController: ViewCodeProtocol {
             mainStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             mainStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             
-            componentCategory.heightAnchor.constraint(equalToConstant: 51),
-            componentDetails.heightAnchor.constraint(equalToConstant: 207),
+            componentCategory.heightAnchor.constraint(equalToConstant: 44),
+            componentDetails.heightAnchor.constraint(equalToConstant: 176),
 
             titleTextField.heightAnchor.constraint(equalToConstant: 52),
             notesTextView.heightAnchor.constraint(equalToConstant: 100)

@@ -105,7 +105,7 @@ extension SelectorCell: ViewCodeProtocol {
             stackView.bottomAnchor.constraint(equalTo: self.layoutMarginsGuide.bottomAnchor),
             stackView.leadingAnchor.constraint(equalTo: self.layoutMarginsGuide.leadingAnchor),
             stackView.trailingAnchor.constraint(equalTo: self.layoutMarginsGuide.trailingAnchor),
-            
+                        
             iconImageView.widthAnchor.constraint(equalToConstant: 35),
             iconImageView.heightAnchor.constraint(equalToConstant: 24)
             

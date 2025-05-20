@@ -19,6 +19,8 @@ class PropertiesSelector: UIView {
         tableView.register(SelectorCell.self, forCellReuseIdentifier: SelectorCell.reuseIdentifier)
         tableView.separatorStyle = .singleLine
         tableView.layer.cornerRadius = 12
+        tableView.rowHeight = 44
+        tableView.isScrollEnabled = false
         return tableView
     }()
 

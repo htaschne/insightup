@@ -77,6 +77,7 @@ class HomeViewController: UIViewController {
 
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.title = "InsightUp"
+        navigationItem.backButtonTitle = "Back"
         navigationItem.searchController = searchController
         navigationItem.rightBarButtonItem = buttonProfile
 

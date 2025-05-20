@@ -40,11 +40,38 @@ enum TargetAudience: String, Codable, CaseIterable {
 }
 
 enum Budget: String, Codable, CaseIterable {
-    case LessThan100, Between100And500, Between500And1000, MoreThan1000
+    case LessThan100
+    case Between100And500
+    case Between500And1000
+    case MoreThan1000
+
+    var description: String {
+        switch self {
+        case .LessThan100: return "Less than $100"
+        case .Between100And500: return "$100 – $500"
+        case .Between500And1000: return "$500 – $1000"
+        case .MoreThan1000: return "More than $1000"
+        }
+    }
 }
 
+
 enum Effort: String, Codable, CaseIterable {
-    case Solo, With1, With2to4, CrossTeam, ExternalHelp
+    case Solo
+    case With1
+    case With2to4
+    case CrossTeam
+    case ExternalHelp
+
+    var description: String {
+        switch self {
+        case .Solo: return "Solo"
+        case .With1: return "With 1 other"
+        case .With2to4: return "2–4 people"
+        case .CrossTeam: return "Cross-team +4"
+        case .ExternalHelp: return "External help"
+        }
+    }
 }
 
 
