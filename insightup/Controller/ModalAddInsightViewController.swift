@@ -6,10 +6,11 @@
 //
 
 import UIKit
+import Foundation
 
 class ModalAddInsightViewController: UIViewController {
     
-    var onDone: (() -> Void)?
+    var onDone: ((Insight) -> Void)?
     weak var delegate: ModalAddInsightDelegate?
     
     lazy var navBar: UINavigationBar = {
@@ -198,8 +199,6 @@ class ModalAddInsightViewController: UIViewController {
             self.onDone?(newInsight)
         }
     }
-
-
 
 }
 

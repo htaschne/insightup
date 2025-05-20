@@ -96,7 +96,7 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
         let modalVC = ModalAddInsightViewController()
         modalVC.modalPresentationStyle = .automatic
         
-        modalVC.onDone = { [weak self] in
+        modalVC.onDone = { [weak self] _ in
             guard let self = self else { return }
             
             self.insights = InsightPersistence.getAll().insights
