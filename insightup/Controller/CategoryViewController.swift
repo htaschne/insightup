@@ -118,7 +118,7 @@ class CategoryViewController: UIViewController {
         super.viewDidLoad()
         setup()
 
-        view.backgroundColor = UIColor(named: "BackgroundsPrimary")
+        view.backgroundColor = UIColor(named: "BackgroundsSecondary")
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.title = category?.rawValue
         navigationItem.searchController = searchController
