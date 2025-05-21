@@ -30,6 +30,10 @@ class HomeScreenView: UIView {
         priorityLabel.isHidden = topInsights.isEmpty
         highPriorityTableView.reloadData()
     }
+    
+    func getInsight(by indexPath: IndexPath) -> Insight {
+        return topInsights[indexPath.row]
+    }
 
     init(navigationController: UINavigationController) {
         super.init(frame: .zero)
@@ -352,5 +356,41 @@ extension HomeScreenView: UITableViewDelegate {
     ) {
         print("selected row \(indexPath)")
     }
+    
+    func tableView(
+        _ tableView: UITableView,
+        trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath
+    ) -> UISwipeActionsConfiguration? {
+
+        let deleteAction = UIContextualAction(
+            style: .destructive,
+            title: "Delete"
+        ) { [weak self] (action, view, completionHandler) in
+            guard let self = self else {
+                completionHandler(false)
+                return
+            }
+
+            let insightToDelete = self.getInsight(by: indexPath)
+            InsightPersistence.delete(by: insightToDelete.id)
+
+            let deletedTitle = self.topInsights[indexPath.row]
+            self.topInsights.remove(at: indexPath.row)
+            if let indexInAll = self.topInsights.firstIndex(of: deletedTitle) {
+                self.topInsights.remove(at: indexInAll)
+            }
+
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+
+            self.loadTopInsights()
+            completionHandler(true)
+        }
+
+        deleteAction.image = UIImage(systemName: "trash.fill")
+        let swipe = UISwipeActionsConfiguration(actions: [deleteAction])
+        return swipe
+    }
 
 }
+
+

@@ -184,5 +184,4 @@ extension HomeViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         // TODO(Agatha): update
     }
-
 }
