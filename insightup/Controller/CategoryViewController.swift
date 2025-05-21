@@ -45,6 +45,7 @@ class CategoryViewController: UIViewController {
         tableView.layer.cornerRadius = 8
         tableView.dataSource = self
         tableView.delegate = self
+        tableView.isScrollEnabled = false
         tableView.separatorStyle = .none
         return tableView
     }()
