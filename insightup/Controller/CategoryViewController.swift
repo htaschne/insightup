@@ -54,6 +54,7 @@ class CategoryViewController: UIViewController {
         let vc = ModalAddInsightViewController()
         vc.modalPresentationStyle = .pageSheet
         vc.delegate = self
+        vc.navBar.backItem?.title = "Back"
         present(vc, animated: true)
     }
 
