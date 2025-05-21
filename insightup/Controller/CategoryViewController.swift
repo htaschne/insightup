@@ -246,17 +246,25 @@ extension CategoryViewController: UITableViewDataSource, UITableViewDelegate {
         let deleteAction = UIContextualAction(
             style: .destructive,
             title: "Delete"
-        ) {
-            [weak self] (action, view, completionHandler) in
-
-            if let insightToDelete = self?.getInsight(by: indexPath) {
-                InsightPersistence.delete(by: insightToDelete.id)
-                let insights = InsightPersistence.getAll().insights.map({
-                    $0.title
-                })
-                self?.insights = insights
-                self?.filteredInsights = insights
+        ) { [weak self] (action, view, completionHandler) in
+            guard let self = self else {
+                completionHandler(false)
+                return
             }
+
+            let insightToDelete = self.getInsight(by: indexPath)
+            InsightPersistence.delete(by: insightToDelete.id)
+
+            let deletedTitle = self.filteredInsights[indexPath.row]
+            self.filteredInsights.remove(at: indexPath.row)
+            if let indexInAll = self.insights.firstIndex(of: deletedTitle) {
+                self.insights.remove(at: indexInAll)
+            }
+
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+
+            self.updateEmptyStateVisibility()
+            self.updateTableViewHeight()
 
             completionHandler(true)
         }
