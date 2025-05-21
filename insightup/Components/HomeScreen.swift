@@ -26,9 +26,37 @@ class HomeScreenView: UIView {
         }
 
         topInsights = Array(sortedInsights.prefix(3))
+        updateCategoryCounts()
         highPriorityTableView.isHidden = topInsights.isEmpty
         priorityLabel.isHidden = topInsights.isEmpty
         highPriorityTableView.reloadData()
+    }
+    
+    private func updateCategoryCounts() {
+        let allInsights = InsightPersistence.getAll().insights
+        let categories: [InsightCategory] = [.Ideas, .Problems, .Feelings, .Observations, .All]
+
+        for category in categories {
+            let count: Int
+            if category == .All {
+                count = allInsights.count
+            } else {
+                count = allInsights.filter { $0.category == category }.count
+            }
+
+            switch category {
+            case .Ideas:
+                ideasButton.counterValue = String(count)
+            case .Problems:
+                problemsButton.counterValue = String(count)
+            case .Feelings:
+                feelingsButton.counterValue = String(count)
+            case .Observations:
+                observationsButton.counterValue = String(count)
+            case .All:
+                allButton.counterValue = String(count)
+            }
+        }
     }
     
     func getInsight(by indexPath: IndexPath) -> Insight {
@@ -40,6 +68,7 @@ class HomeScreenView: UIView {
         self.navigationController = navigationController
         setup()
         loadTopInsights()
+        updateCategoryCounts()
     }
 
     @objc func handleIdeasButton() {
@@ -48,6 +77,7 @@ class HomeScreenView: UIView {
             fatalError("Could not unwrap navigationController")
         }
         navigationController.pushViewController(vc, animated: true)
+        updateCategoryCounts()
     }
 
     lazy var ideasButton: CardCategoryComponent = {
@@ -67,6 +97,7 @@ class HomeScreenView: UIView {
             fatalError("Could not unwrap navigationController")
         }
         navigationController.pushViewController(vc, animated: true)
+        updateCategoryCounts()
     }
 
     lazy var problemsButton: CardCategoryComponent = {
@@ -86,6 +117,7 @@ class HomeScreenView: UIView {
             fatalError("Could not unwrap navigationController")
         }
         navigationController.pushViewController(vc, animated: true)
+        updateCategoryCounts()
     }
 
     lazy var feelingsButton: CardCategoryComponent = {
@@ -105,6 +137,7 @@ class HomeScreenView: UIView {
             fatalError("Could not unwrap navigationController")
         }
         navigationController.pushViewController(vc, animated: true)
+        updateCategoryCounts()
     }
 
     lazy var observationsButton: CardCategoryComponent = {
@@ -124,6 +157,7 @@ class HomeScreenView: UIView {
             fatalError("Could not unwrap navigationController")
         }
         navigationController.pushViewController(vc, animated: true)
+        updateCategoryCounts()
     }
 
     lazy var allButton: CardCategoryComponent = {
@@ -202,6 +236,7 @@ class HomeScreenView: UIView {
         let vc = ModalAddInsightViewController()
         vc.modalPresentationStyle = .pageSheet
         navigationController?.present(vc, animated: true)
+        updateCategoryCounts()
     }
 
     lazy var addInsightButton: UIButton = {
@@ -384,6 +419,7 @@ extension HomeScreenView: UITableViewDelegate {
 
             self.loadTopInsights()
             completionHandler(true)
+            updateCategoryCounts()
         }
 
         deleteAction.image = UIImage(systemName: "trash.fill")
