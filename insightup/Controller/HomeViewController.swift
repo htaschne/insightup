@@ -13,12 +13,14 @@ class HomeViewController: UIViewController {
     private var filteredInsights: [Insight] = []
     
     private lazy var buttonProfile: UIBarButtonItem = {
-        UIBarButtonItem(
+        let b = UIBarButtonItem(
             image: UIImage(systemName: "person.circle.fill"),
             style: .plain,
             target: self,
             action: #selector(profileButtonTapped)
         )
+        b.tintColor = .gray
+        return b
     }()
 
     private lazy var searchController: UISearchController = {
