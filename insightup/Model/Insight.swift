@@ -75,7 +75,7 @@ enum Effort: String, Codable, CaseIterable {
 }
 
 
-struct Insight: Codable {
+struct Insight: Codable, Equatable {
     var id: UUID = UUID()
     var title: String
     var notes: String

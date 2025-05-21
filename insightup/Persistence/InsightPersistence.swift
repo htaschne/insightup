@@ -13,7 +13,10 @@ struct InsightPersistence {
     static func getAll() -> Insights {
         if let data = UserDefaults.standard.value(forKey: key) as? Data {
             do {
-                let insights = try JSONDecoder().decode(Insights.self, from: data)
+                let insights = try JSONDecoder().decode(
+                    Insights.self,
+                    from: data
+                )
                 return insights
             } catch {
                 print(error.localizedDescription)
@@ -48,15 +51,20 @@ struct InsightPersistence {
     static func deleteInsight(at index: Int) {
         var insights = getAll()
         insights.insights.remove(at: index)
-        do {
-            let data = try JSONEncoder().encode(insights)
-            UserDefaults.standard.setValue(data, forKey: key)
-        } catch {
-            print(error.localizedDescription)
+        save(insights: insights)
+    }
+
+    static func delete(by id: UUID) {
+        var insights = getAll()
+        if let index = insights.insights.firstIndex(where: { $0.id == id }) {
+            insights.insights.remove(at: index)
+            save(insights: insights)
         }
     }
 
     static func getAllBy(category: InsightCategory) -> [Insight] {
-        return category == .All ? getAll().insights : getAll().insights.filter { $0.category == category }
+        return category == .All
+            ? getAll().insights
+            : getAll().insights.filter { $0.category == category }
     }
 }

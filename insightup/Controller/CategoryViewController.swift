@@ -14,6 +14,16 @@ class CategoryViewController: UIViewController {
     private var filteredInsights: [String] = []
     private var tableViewHeightConstraint: NSLayoutConstraint?
 
+    func getInsight(by indexPath: IndexPath) -> Insight {
+        let insight = filteredInsights[indexPath.row]
+        for ii in InsightPersistence.getAll().insights {
+            if ii.title == insight {
+                return ii
+            }
+        }
+        fatalError()
+    }
+
     var category: InsightCategory?
     init(category: InsightCategory) {
         super.init(nibName: nil, bundle: nil)
@@ -38,7 +48,10 @@ class CategoryViewController: UIViewController {
     private lazy var insightsTableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.register(InsightCell.self, forCellReuseIdentifier: InsightCell.reuseIdentifier)
+        tableView.register(
+            InsightCell.self,
+            forCellReuseIdentifier: InsightCell.reuseIdentifier
+        )
         tableView.rowHeight = 44
         tableView.separatorInset = .zero
         tableView.tableFooterView = UIView()
@@ -158,10 +171,11 @@ class CategoryViewController: UIViewController {
         emptyState.isHidden = !isEmpty
         insightsTableView.isHidden = isEmpty
     }
-    
+
     private func updateTableViewHeight() {
         insightsTableView.layoutIfNeeded()
-        tableViewHeightConstraint?.constant = insightsTableView.contentSize.height
+        tableViewHeightConstraint?.constant =
+            insightsTableView.contentSize.height
     }
 }
 
@@ -198,11 +212,15 @@ extension CategoryViewController: UITableViewDataSource, UITableViewDelegate {
         return filteredInsights.count
     }
 
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(
-            withIdentifier: InsightCell.reuseIdentifier,
-            for: indexPath
-        ) as? InsightCell else {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath)
+        -> UITableViewCell
+    {
+        guard
+            let cell = tableView.dequeueReusableCell(
+                withIdentifier: InsightCell.reuseIdentifier,
+                for: indexPath
+            ) as? InsightCell
+        else {
             return UITableViewCell()
         }
 
@@ -212,13 +230,40 @@ extension CategoryViewController: UITableViewDataSource, UITableViewDelegate {
         return cell
     }
 
-
     func tableView(
         _ tableView: UITableView,
         didSelectRowAt indexPath: IndexPath
     ) {
         tableView.deselectRow(at: indexPath, animated: true)
         print("Tapped:", filteredInsights[indexPath.row])
+    }
+
+    func tableView(
+        _ tableView: UITableView,
+        trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath
+    ) -> UISwipeActionsConfiguration? {
+
+        let deleteAction = UIContextualAction(
+            style: .destructive,
+            title: "Delete"
+        ) {
+            [weak self] (action, view, completionHandler) in
+
+            if let insightToDelete = self?.getInsight(by: indexPath) {
+                InsightPersistence.delete(by: insightToDelete.id)
+                let insights = InsightPersistence.getAll().insights.map({
+                    $0.title
+                })
+                self?.insights = insights
+                self?.filteredInsights = insights
+            }
+
+            completionHandler(true)
+        }
+
+        deleteAction.image = UIImage(systemName: "trash.fill")
+        let swipe = UISwipeActionsConfiguration(actions: [deleteAction])
+        return swipe
     }
 }
 
@@ -255,7 +300,7 @@ extension CategoryViewController: ViewCodeProtocol {
                 equalTo: view.safeAreaLayoutGuide.topAnchor,
                 constant: 16
             ),
-            
+
             addInsightButton.leadingAnchor.constraint(
                 equalTo: view.leadingAnchor,
                 constant: 16
@@ -271,10 +316,12 @@ extension CategoryViewController: ViewCodeProtocol {
             addInsightButton.heightAnchor.constraint(equalToConstant: 48),
 
         ])
-        
-        tableViewHeightConstraint = insightsTableView.heightAnchor.constraint(equalToConstant: 0)
+
+        tableViewHeightConstraint = insightsTableView.heightAnchor.constraint(
+            equalToConstant: 0
+        )
         tableViewHeightConstraint?.isActive = true
-        
+
     }
 
 }

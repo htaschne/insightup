@@ -10,7 +10,6 @@ import UIKit
 class HomeScreenView: UIView {
 
     private var topInsights: [Insight] = []
-
     var navigationController: UINavigationController?
 
     private func loadTopInsights() {
