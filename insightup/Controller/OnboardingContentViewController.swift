@@ -196,11 +196,11 @@ class OnboardingContentViewController: UIViewController {
       b.contentHorizontalAlignment = .center
       b.heightAnchor.constraint(equalToConstant: 42).isActive = true
       
-      b.backgroundColor = .white
+      b.backgroundColor = .backgroundsPrimary
       b.setTitleColor(.label, for: .normal)
       b.layer.cornerRadius = 10
       b.layer.borderWidth = 1
-      b.layer.borderColor = UIColor.graysGray5.cgColor
+      b.layer.borderColor = UIColor.systemGray4.cgColor
       
       b.tag = tag
       b.addTarget(self, action: #selector(handleOptionTap(_:)), for: .touchUpInside)
@@ -209,11 +209,11 @@ class OnboardingContentViewController: UIViewController {
 
     private func updateButtonStyle(_ button: UIButton) {
         if button.isSelected {
-            button.backgroundColor = .systemBlue
-            button.setTitleColor(.white, for: .normal)
-            button.layer.borderColor = UIColor.clear.cgColor
+            button.backgroundColor = .colorsBlue
+            button.setTitleColor(.labelsPrimary, for: .normal)
+            button.layer.borderColor = UIColor.systemGray4.cgColor
         } else {
-            button.backgroundColor = .white
+            button.backgroundColor = .backgroundsPrimary
             button.setTitleColor(.label, for: .normal)
             button.layer.borderColor = UIColor.systemGray4.cgColor
         }

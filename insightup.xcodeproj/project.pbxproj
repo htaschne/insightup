@@ -298,7 +298,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = J63SH8A52R;
+				DEVELOPMENT_TEAM = 5842KMQ5K4;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = insightup/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -328,7 +328,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = J63SH8A52R;
+				DEVELOPMENT_TEAM = 5842KMQ5K4;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = insightup/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
