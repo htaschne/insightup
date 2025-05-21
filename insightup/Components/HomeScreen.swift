@@ -391,6 +391,12 @@ extension HomeScreenView: UITableViewDelegate {
         didSelectRowAt indexPath: IndexPath
     ) {
         print("selected row \(indexPath)")
+        
+        let currentInsight = InsightPersistence.getAll().insights.first(where: {
+            $0.title == topInsights[indexPath.row].title
+        })
+        let detailVC = InsightDetailViewController(insight: currentInsight!)
+        navigationController?.pushViewController(detailVC, animated: true)
     }
     
     func tableView(

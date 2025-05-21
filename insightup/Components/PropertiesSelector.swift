@@ -8,9 +8,15 @@
 //import DesignSystem
 import UIKit
 
+protocol PropertiesSelectorDelegate: AnyObject {
+    func propertiesSelector(_ selector: PropertiesSelector, didSelectItemAt indexPath: IndexPath)
+}
+
 class PropertiesSelector: UIView {
     
     private var items: [PropertyItem] = []
+    
+    weak var delegate: PropertiesSelectorDelegate?
 
     lazy var tableView: UITableView = {
         let tableView = UITableView()
@@ -73,6 +79,11 @@ extension PropertiesSelector: UITableViewDataSource {
     }
 }
 
+extension PropertiesSelector: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        delegate?.propertiesSelector(self, didSelectItemAt: indexPath)
+    }
+}
 
 extension PropertiesSelector: ViewCodeProtocol {
     func addSubviews() {

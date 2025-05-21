@@ -236,6 +236,12 @@ extension CategoryViewController: UITableViewDataSource, UITableViewDelegate {
     ) {
         tableView.deselectRow(at: indexPath, animated: true)
         print("Tapped:", filteredInsights[indexPath.row])
+        
+        let currentInsight = InsightPersistence.getAll().insights.first(where: {
+            $0.title == filteredInsights[indexPath.row]
+        })
+        let detailVC = InsightDetailViewController(insight: currentInsight!)
+        navigationController?.pushViewController(detailVC, animated: true)
     }
 
     func tableView(
@@ -336,6 +342,6 @@ extension CategoryViewController: ViewCodeProtocol {
 
 extension CategoryViewController: ModalAddInsightDelegate {
     func didAddInsight() {
-        loadInsights()  // ✅ refresh the table
+        loadInsights()
     }
 }
