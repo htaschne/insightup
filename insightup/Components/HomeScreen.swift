@@ -235,8 +235,9 @@ class HomeScreenView: UIView {
     @objc func handleAddInsight() {
         let vc = ModalAddInsightViewController()
         vc.modalPresentationStyle = .pageSheet
-        navigationController?.present(vc, animated: true)
+        vc.delegate = self
         updateCategoryCounts()
+        navigationController?.present(vc, animated: true)
     }
 
     lazy var addInsightButton: UIButton = {
@@ -429,4 +430,8 @@ extension HomeScreenView: UITableViewDelegate {
 
 }
 
-
+extension HomeScreenView: ModalAddInsightDelegate {
+    func didAddInsight() {
+        loadTopInsights()
+    }
+}
