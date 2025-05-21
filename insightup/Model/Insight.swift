@@ -95,4 +95,5 @@ struct PropertyItem {
     let title: String
     let iconName: String
     let options: [String]
+    var selectedOptionIndex: Int? = nil
 }
