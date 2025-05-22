@@ -225,7 +225,7 @@ extension ModalAddInsightViewController: ViewCodeProtocol {
             mainStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             
             componentCategory.heightAnchor.constraint(equalToConstant: 44),
-            componentDetails.heightAnchor.constraint(equalToConstant: 176),
+            componentDetails.heightAnchor.constraint(equalToConstant: 175),
 
             titleTextField.heightAnchor.constraint(equalToConstant: 52),
             notesTextView.heightAnchor.constraint(equalToConstant: 100)

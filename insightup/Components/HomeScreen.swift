@@ -212,7 +212,7 @@ class HomeScreenView: UIView {
 
     lazy var priorityLabel: UILabel = {
         var label = UILabel()
-        label.text = "High Priority"
+        label.text = "Highest Priority"
         label.textAlignment = .left
         label.font = .systemFont(ofSize: 24, weight: .semibold)
         label.translatesAutoresizingMaskIntoConstraints = false
