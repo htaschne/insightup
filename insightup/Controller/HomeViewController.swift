@@ -51,7 +51,7 @@ class HomeViewController: UIViewController {
         var homeView = HomeScreenView(navigationController: navigationController)
         homeView.translatesAutoresizingMaskIntoConstraints = false
         homeView.isHidden = false
-        homeView.backgroundColor = UIColor(named: "BackgroundsPrimary")
+        homeView.backgroundColor = UIColor(named: "BackgroundsSecondary")
         homeView.addInsightButton.addTarget(self, action: #selector(modalButtonTapped), for: .touchUpInside)
         return homeView
     }()

@@ -30,6 +30,7 @@ class HomeScreenView: UIView {
         highPriorityTableView.isHidden = topInsights.isEmpty
         priorityLabel.isHidden = topInsights.isEmpty
         highPriorityTableView.reloadData()
+        setup()
     }
     
     private func updateCategoryCounts() {
@@ -228,7 +229,7 @@ class HomeScreenView: UIView {
         )
         tableView.layer.cornerRadius = 12
         tableView.clipsToBounds = true
-        tableView.backgroundColor = .systemBackground
+        tableView.backgroundColor = UIColor(named: "Backgroundsecondary")
         return tableView
     }()
 

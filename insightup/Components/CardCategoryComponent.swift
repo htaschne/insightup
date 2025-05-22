@@ -91,7 +91,7 @@ class CardCategoryComponent: UIView {
         fullStack.addArrangedSubview(iconCounterStack)
         fullStack.addArrangedSubview(title)
 
-        backgroundColor = UIColor(named: "BackgroundsSecondary") ?? .red
+        backgroundColor = UIColor(named: "BackgroundsPrimary")!
         layer.cornerRadius = 12
     }
     
