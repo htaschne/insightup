@@ -11,6 +11,8 @@ class ProfileViewController: UIViewController {
 
     private var insights: [Insight] = []
     private var filteredInsights: [Insight] = []
+    
+    private var onboardingData: OnboardingData?
 
     private lazy var labelPreferencesTitle: UILabel = {
         let label = UILabel()
@@ -43,7 +45,7 @@ class ProfileViewController: UIViewController {
         let imgView = UIImageView()
         imgView.translatesAutoresizingMaskIntoConstraints = false
         imgView.contentMode = .scaleAspectFit
-        imgView.image = UIImage(systemName: "person.circle.fill")
+        imgView.image = UIImage(named: "ProfileImage")
         imgView.tintColor = .systemGray
         return imgView
     }()
@@ -90,6 +92,12 @@ class ProfileViewController: UIViewController {
         stack.layer.cornerRadius = 12
         return stack
     }()
+    
+    private lazy var profileComponent: ProfileComponent = {
+        var component = ProfileComponent()
+        component.translatesAutoresizingMaskIntoConstraints = false
+        return component
+    }()
 
     @objc private func dismissKeyboard() {
         view.endEditing(true)
@@ -97,23 +105,30 @@ class ProfileViewController: UIViewController {
 
     lazy var componentPreferences: PropertiesSelector = {
         var component = PropertiesSelector()
+        guard let onboardingData = UserDefaults.standard.loadOnboarding() else { return component }
         component.translatesAutoresizingMaskIntoConstraints = false
         component.tableView.rowHeight = 44
         component.configure(with:[
             PropertyItem(
                     title: "Weekly Routine",
                     iconName: "calendar",
-                    options: OnboardingData.WeeklyRoutine.allCases.map {$0.description}
+                    options: OnboardingData.WeeklyRoutine.allCases.map {$0.description},
+                    selectedOptions: [onboardingData.routine?.description ?? ""],
+                    multipleSelection: false
                 ),
                 PropertyItem(
                     title: "Areas of Interest",
                     iconName: "text.book.closed.fill",
-                    options: OnboardingData.Interest.allCases.map { $0.description }
+                    options: OnboardingData.Interest.allCases.map { $0.description },
+                    selectedOptions: onboardingData.interests.map { $0.description },
+                    multipleSelection: true
                 ),
                 PropertyItem(
-                    title: "Main Goal",
+                    title: "Main Goals",
                     iconName: "checkmark.seal.fill",
-                    options: OnboardingData.MainGoal.allCases.map { $0.description }
+                    options: OnboardingData.MainGoal.allCases.map { $0.description },
+                    selectedOptions: onboardingData.mainGoals.map { $0.description },
+                    multipleSelection: true
                 )
         ])
         return component
@@ -124,6 +139,42 @@ class ProfileViewController: UIViewController {
         super.viewWillAppear(animated)
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.hidesSearchBarWhenScrolling = false
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationController?.navigationBar.prefersLargeTitles = true
+        
+        let selectedRoutineDescription = componentPreferences.getValue(for: "Weekly Routine") ?? ""
+        let selectedInterestsDescription = componentPreferences.getSelectedOptions(for: "Areas of Interest")
+        let selectedGoalsDescription = componentPreferences.getSelectedOptions(for: "Main Goals")
+        
+        let selectedRoutine = OnboardingData.WeeklyRoutine.allCases.first { $0.rawValue == selectedRoutineDescription }
+        var selectedInterests: [OnboardingData.Interest] = []
+        var selectedGoals: [OnboardingData.MainGoal] = []
+        
+        for string in selectedInterestsDescription {
+            if let interest = OnboardingData.Interest(rawValue: string) {
+                selectedInterests.append(interest)
+            }
+        }
+        for string in selectedGoalsDescription{
+            if let goal = OnboardingData.MainGoal(rawValue: string) {
+                selectedGoals.append(goal)
+            }
+        }
+        
+        guard var onboardingData = UserDefaults.standard.loadOnboarding() else {return}
+        
+        onboardingData.interests = selectedInterests
+        onboardingData.mainGoals = selectedGoals
+        onboardingData.routine = selectedRoutine
+        
+        print(selectedRoutineDescription)
+        print(selectedInterestsDescription)
+        print(selectedGoalsDescription)
+        
+        UserDefaults.standard.saveOnboarding(onboardingData)
     }
     
     override func viewDidLoad() {
@@ -142,6 +193,7 @@ class ProfileViewController: UIViewController {
 
         navigationItem.largeTitleDisplayMode = .never
         navigationController?.navigationBar.prefersLargeTitles = false
+    
         navigationItem.title = "Profile"
         navigationItem.backButtonTitle = "Back"
         navigationController?.navigationBar.backgroundColor = UIColor(named: "BackgroundsTertiary")
@@ -161,12 +213,6 @@ class ProfileViewController: UIViewController {
         setup()
     }
     
-    @objc func modalButtonTapped() {
-        let modalVC = ModalAddInsightViewController()
-        modalVC.modalPresentationStyle = .automatic
-        present(modalVC, animated: true)
-
-    }
 
 }
 
@@ -175,7 +221,8 @@ extension ProfileViewController: ViewCodeProtocol {
         [
             //tableView,
             stackPreferences,
-            stackUserInfo,
+            profileComponent,
+           // stackUserInfo,
             componentPreferences
 
         ].forEach(view.addSubview)
@@ -195,12 +242,13 @@ extension ProfileViewController: ViewCodeProtocol {
 
 
                         
-            stackUserInfo.topAnchor.constraint(equalTo: stackPreferences.bottomAnchor, constant: 16),
-            stackUserInfo.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            stackUserInfo.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            stackUserInfo.widthAnchor.constraint(equalToConstant: 370),            stackUserInfo.heightAnchor.constraint(equalToConstant: 70),
+            profileComponent.topAnchor.constraint(equalTo: stackPreferences.bottomAnchor, constant: 16),
+            profileComponent.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            profileComponent.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            profileComponent.widthAnchor.constraint(equalToConstant: 370),
+            profileComponent.heightAnchor.constraint(equalToConstant: 70),
             
-            componentPreferences.topAnchor.constraint(equalTo: stackUserInfo.bottomAnchor, constant: 16),
+            componentPreferences.topAnchor.constraint(equalTo: profileComponent.bottomAnchor, constant: 16),
             componentPreferences.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             componentPreferences.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             componentPreferences.heightAnchor.constraint(equalToConstant: 132),

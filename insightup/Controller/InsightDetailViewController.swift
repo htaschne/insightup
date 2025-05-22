@@ -147,10 +147,10 @@ extension InsightDetailViewController {
         let b = insight.bugdet.rawValue
 
         return [
-            PropertyItem(title: "Priority", iconName: "exclamationmark.triangle.fill", options: [p] + Category.allCases.map { $0.rawValue }.filter { $0 != p }),
-            PropertyItem(title: "Audience", iconName: "megaphone.fill", options: [a] + TargetAudience.allCases.map { $0.rawValue }.filter { $0 != a }),
-            PropertyItem(title: "Execution Effort", iconName: "person.line.dotted.person.fill", options: [e] + Effort.allCases.map { $0.rawValue }.filter { $0 != e }),
-            PropertyItem(title: "Budget", iconName: "dollarsign.gauge.chart.leftthird.topthird.rightthird", options: [b] + Budget.allCases.map { $0.rawValue }.filter { $0 != b })
+            PropertyItem(title: "Priority", iconName: "exclamationmark.triangle.fill", options: [p] + Category.allCases.map { $0.rawValue }.filter { $0 != p }, selectedOptions: [insight.priority.rawValue], multipleSelection: false),
+            PropertyItem(title: "Audience", iconName: "megaphone.fill", options: [a] + TargetAudience.allCases.map { $0.rawValue }.filter { $0 != a }, selectedOptions: [insight.audience.rawValue], multipleSelection: false),
+            PropertyItem(title: "Execution Effort", iconName: "person.line.dotted.person.fill", options: [e] + Effort.allCases.map { $0.rawValue }.filter { $0 != e }, selectedOptions: [insight.executionEffort.rawValue], multipleSelection: false),
+            PropertyItem(title: "Budget", iconName: "dollarsign.gauge.chart.leftthird.topthird.rightthird", options: [b] + Budget.allCases.map { $0.rawValue }.filter { $0 != b }, selectedOptions: [insight.bugdet.rawValue], multipleSelection: false)
         ]
     }
 

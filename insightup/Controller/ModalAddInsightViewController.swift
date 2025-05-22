@@ -87,7 +87,11 @@ class ModalAddInsightViewController: UIViewController {
         component.translatesAutoresizingMaskIntoConstraints = false
         component.tableView.separatorStyle = .none
         component.configure(with:[
-            PropertyItem(title: "Category", iconName: "tag.fill", options: ["Ideas", "Problems", "Feelings", "Observations"])
+            PropertyItem(title: "Category",
+                         iconName: "tag.fill",
+                         options: ["Ideas", "Problems", "Feelings", "Observations"],
+                         selectedOptions: [],
+                         multipleSelection: false)
         ])
         return component
     }()
@@ -99,22 +103,30 @@ class ModalAddInsightViewController: UIViewController {
             PropertyItem(
                     title: "Priority",
                     iconName: "exclamationmark.triangle.fill",
-                    options: Category.allCases.map { $0.rawValue }
+                    options: Category.allCases.map { $0.rawValue },
+                    selectedOptions: [],
+                    multipleSelection: false
                 ),
                 PropertyItem(
                     title: "Audience",
                     iconName: "megaphone.fill",
-                    options: TargetAudience.allCases.map { $0.rawValue }
+                    options: TargetAudience.allCases.map { $0.rawValue },
+                    selectedOptions: [],
+                    multipleSelection: false
                 ),
                 PropertyItem(
                     title: "Execution Effort",
                     iconName: "person.line.dotted.person.fill",
-                    options: Effort.allCases.map { $0.rawValue }
+                    options: Effort.allCases.map { $0.rawValue },
+                    selectedOptions: [],
+                    multipleSelection: false
                 ),
                 PropertyItem(
                     title: "Budget",
                     iconName: "dollarsign.gauge.chart.leftthird.topthird.rightthird",
-                    options: Budget.allCases.map { $0.rawValue }
+                    options: Budget.allCases.map { $0.rawValue },
+                    selectedOptions: [],
+                    multipleSelection: false
                 )
         ])
         return component

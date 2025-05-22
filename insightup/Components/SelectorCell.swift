@@ -1,7 +1,24 @@
 import UIKit
 
+protocol SelectorCellDelegate: AnyObject {
+    func selectorCell(_ cell: SelectorCell, didUpdateSelectedOptions selected: [String])
+}
+
 class SelectorCell: UITableViewCell {
     static let reuseIdentifier = "SelectorCell"
+
+    weak var delegate: SelectorCellDelegate?
+
+    private var selectedOptions: Set<String> = [] {
+        didSet {
+            if let currentItem {
+                builMenu(for: currentItem)
+            }
+        }
+    }
+    private var allOptions: [String] = []
+    private var isMultipleSelection: Bool = false
+    private var currentItem: PropertyItem?
 
     lazy var iconImageView: UIImageView = {
         let imageView = UIImageView()
@@ -25,36 +42,38 @@ class SelectorCell: UITableViewCell {
         button.translatesAutoresizingMaskIntoConstraints = false
 
         var configuration = UIButton.Configuration.plain()
-        configuration.title = "None"
+        configuration.title = "Nenhum"
         configuration.baseForegroundColor = UIColor(named: "LabelsSecondary")
         configuration.indicator = .popup
-        configuration.imagePlacement = .leading
+        configuration.imagePlacement = .trailing
         configuration.imagePadding = 8
 
         button.configuration = configuration
         button.showsMenuAsPrimaryAction = true
+        
+        button.titleLabel?.textAlignment = .right
 
         return button
     }()
-    
+
     lazy var iconLabelStack: UIStackView = {
-        var stackView = UIStackView(arrangedSubviews: [iconImageView, lblCategory])
+        let stackView = UIStackView(arrangedSubviews: [iconImageView, lblCategory])
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .horizontal
         stackView.spacing = 16
         return stackView
     }()
-    
+
     lazy var spacer: UIView = {
-        var spacer = UIView()
+        let spacer = UIView()
         spacer.translatesAutoresizingMaskIntoConstraints = false
         spacer.setContentHuggingPriority(.defaultLow, for: .horizontal)
         spacer.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         return spacer
     }()
-    
+
     lazy var stackView: UIStackView = {
-        var stackView = UIStackView(arrangedSubviews: [iconLabelStack, spacer, btnCategory])
+        let stackView = UIStackView(arrangedSubviews: [iconLabelStack, spacer, btnCategory])
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .horizontal
         stackView.spacing = 8
@@ -74,24 +93,61 @@ class SelectorCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func configure(title: String, iconName: String, options: [String]) {
-        lblCategory.text = title
+    func configure(with item: PropertyItem) {
+        currentItem = item
+        lblCategory.text = item.title
         iconImageView.image = UIImage(
-            systemName: iconName,
+            systemName: item.iconName,
             withConfiguration: UIImage.SymbolConfiguration(pointSize: 24, weight: .regular)
         )
 
-        let menuItems = options.map { option in
-            UIAction(title: option) { [weak self] _ in
-                var config = self?.btnCategory.configuration
-                config?.title = option
-                self?.btnCategory.configuration = config
+        allOptions = item.options
+        selectedOptions = Set(item.selectedOptions)
+        isMultipleSelection = item.multipleSelection
+        updateButtonTitle()
+        builMenu(for: item)
+        
+    }
+    
+    func builMenu(for item: PropertyItem) {
+        let menuItems = allOptions.map { option in
+            UIAction(title: option, state: selectedOptions.contains(option) ? .on : .off) { [weak self] action in
+                guard let self = self else { return }
+
+                if self.isMultipleSelection {
+                    if self.selectedOptions.contains(option) {
+                        self.selectedOptions.remove(option)
+                    } else {
+                        self.selectedOptions.insert(option)
+                    }
+                } else {
+                    self.selectedOptions = [option]
+                }
+
+                self.updateButtonTitle()
+
+                self.delegate?.selectorCell(self, didUpdateSelectedOptions: Array(self.selectedOptions))
             }
         }
 
-        btnCategory.menu = UIMenu(title: "", options: [.singleSelection], children: menuItems)
+        btnCategory.menu = UIMenu(title: "", options: .displayInline, children: menuItems)
+    }
+
+    private func updateButtonTitle() {
+        var newConfig = btnCategory.configuration ?? UIButton.Configuration.plain()
+
+        if selectedOptions.isEmpty {
+            newConfig.title = "None"
+        } else if selectedOptions.count == 1 {
+            newConfig.title = selectedOptions.first
+        } else {
+            newConfig.title = "\(selectedOptions.count) Selected"
+        }
+
+        btnCategory.configuration = newConfig
     }
 }
+
 
 extension SelectorCell: ViewCodeProtocol {
     func addSubviews() {
@@ -103,8 +159,8 @@ extension SelectorCell: ViewCodeProtocol {
       
             stackView.topAnchor.constraint(equalTo: self.layoutMarginsGuide.topAnchor),
             stackView.bottomAnchor.constraint(equalTo: self.layoutMarginsGuide.bottomAnchor),
-            stackView.leadingAnchor.constraint(equalTo: self.layoutMarginsGuide.leadingAnchor),
-            stackView.trailingAnchor.constraint(equalTo: self.layoutMarginsGuide.trailingAnchor),
+            stackView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 10),
+            stackView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -10),
                         
             iconImageView.widthAnchor.constraint(equalToConstant: 35),
             iconImageView.heightAnchor.constraint(equalToConstant: 24)

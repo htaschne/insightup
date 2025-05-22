@@ -123,6 +123,9 @@ class HomeViewController: UIViewController {
     @objc func profileButtonTapped() {
         let profileVC = ProfileViewController()
         navigationController?.pushViewController(profileVC, animated: true)
+        let onboardingData = UserDefaults.standard.loadOnboarding()
+        print(print(onboardingData?.mainGoals.map { $0.description } ?? [])
+)
     }
 
 }

@@ -7,64 +7,36 @@
 
 struct OnboardingData: Codable {
     enum WeeklyRoutine: String, Codable, CaseIterable {
-            case onlyWeekends
-            case someWeekHours
-            case fewFreeDays
-            case plentyFreeTime
+            case onlyWeekends = "Only on weekends"
+            case someWeekHours = "Some hours during the week"
+            case fewFreeDays = "A few free days"
+            case plentyFreeTime = "Plenty of free time"
 
-            var description: String {
-                switch self {
-                case .onlyWeekends:
-                    return "Only on weekends"
-                case .someWeekHours:
-                    return "Some hours during the week"
-                case .fewFreeDays:
-                    return "A few free days"
-                case .plentyFreeTime:
-                    return "Plenty of free time"
-                }
-            }
+        var description: String { rawValue }
         }
+    
     enum Interest: String, Codable, CaseIterable {
-        case business
-        case health
-        case technology
-        case education
-        case art
-        case finance
-        case personalDevelopment
-        case others
+        case business = "Business"
+        case health = "Health"
+        case technology = "Technology"
+        case education = "Education"
+        case art = "Art"
+        case finance = "Finance"
+        case personalDevelopment = "Personal Development"
+        case others = "Others"
 
-        var description: String {
-            switch self {
-            case .business: return "Business"
-            case .health: return "Health"
-            case .technology: return "Technology"
-            case .education: return "Education"
-            case .art: return "Art"
-            case .finance: return "Finance"
-            case .personalDevelopment: return "Personal Development"
-            case .others: return "Others"
-            }
-        }
+        var description: String { rawValue }
+        
     }
 
     enum MainGoal: String, Codable, CaseIterable {
-        case solveProblems
-        case generateIdeas
-        case organizeThoughts
-        case developProjects
-        case improveProductivity
+        case solveProblems = "Solve problems"
+        case generateIdeas = "Generate ideas"
+        case organizeThoughts = "Organize thoughts"
+        case developProjects = "Develop projects"
+        case improveProductivity = "Improve productivity"
 
-        var description: String {
-            switch self {
-            case .solveProblems: return "Solve problems"
-            case .generateIdeas: return "Generate ideas"
-            case .organizeThoughts: return "Organize thoughts"
-            case .developProjects: return "Develop projects"
-            case .improveProductivity: return "Improve productivity"
-            }
-        }
+        var description: String { rawValue }
     }
 
     

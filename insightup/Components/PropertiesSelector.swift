@@ -55,10 +55,12 @@ class PropertiesSelector: UIView {
         }
         return nil
     }
-
+    
+    func getSelectedOptions(for title: String) -> [String] {
+        return items.first(where: { $0.title == title })?.selectedOptions ?? []
+    }
 
 }
-
 
 extension PropertiesSelector: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -74,16 +76,27 @@ extension PropertiesSelector: UITableViewDataSource {
         }
 
         let item = items[indexPath.row]
-        cell.configure(title: item.title, iconName: item.iconName, options: item.options)
+        cell.configure(with: item)
+        cell.delegate = self
         return cell
     }
 }
+
 
 extension PropertiesSelector: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         delegate?.propertiesSelector(self, didSelectItemAt: indexPath)
     }
 }
+
+extension PropertiesSelector: SelectorCellDelegate {
+    func selectorCell(_ cell: SelectorCell, didUpdateSelectedOptions selected: [String]) {
+        if let indexPath = tableView.indexPath(for: cell) {
+            items[indexPath.row].selectedOptions = selected
+        }
+    }
+}
+
 
 extension PropertiesSelector: ViewCodeProtocol {
     func addSubviews() {
