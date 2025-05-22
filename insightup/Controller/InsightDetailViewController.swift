@@ -1,10 +1,3 @@
-//
-//  InsightDetailViewController.swift
-//  insightup
-//
-//  Created by Eduardo Garcia Fensterseifer on 21/05/25.
-//
-
 import UIKit
 
 class InsightDetailViewController: UIViewController {
@@ -102,12 +95,14 @@ extension InsightDetailViewController: ViewCodeProtocol {
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
 
-            // ContentStack inside ScrollView
+            // ContentStack
             contentStack.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor, constant: 20),
             contentStack.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor, constant: 16),
             contentStack.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor, constant: -16),
             contentStack.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor, constant: -20),
             contentStack.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor, constant: -32),
+            
+            propertiesSelector.heightAnchor.constraint(equalToConstant: 44 * 4),
 
             // Bottom Container
             bottomButtonContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -140,9 +135,9 @@ extension InsightDetailViewController {
         contentStack.addArrangedSubview(propertiesSelector)
         propertiesSelector.heightAnchor.constraint(equalToConstant: 207).isActive = true
 
-        // Media Sections
-        contentStack.addArrangedSubview(makeMediaSection(title: "Images", items: selectedImages.map { .image($0) }, addAction: #selector(addImageTapped), removeAction: #selector(removeImageTapped(_:))))
-        contentStack.addArrangedSubview(makeMediaSection(title: "Audios", items: selectedAudios.map { .audio($0) }, addAction: #selector(addAudioTapped), removeAction: #selector(removeAudioTapped(_:))))
+        // Media Sections without header, buttons aligned left
+        contentStack.addArrangedSubview(makeMediaSection(addButtonTitle: "Add Image", items: selectedImages.map { .image($0) }, removeAction: #selector(removeImageTapped(_:))))
+        contentStack.addArrangedSubview(makeMediaSection(addButtonTitle: "Add Audio", items: selectedAudios.map { .audio($0) }, removeAction: #selector(removeAudioTapped(_:))))
     }
 
     private func makeFilterItems() -> [PropertyItem] {
@@ -159,7 +154,7 @@ extension InsightDetailViewController {
         ]
     }
 
-    private func makeMediaSection(title: String, items: [MediaItem], addAction: Selector, removeAction: Selector) -> UIView {
+    private func makeMediaSection(addButtonTitle: String, items: [MediaItem], removeAction: Selector) -> UIView {
         let container = UIView()
         container.translatesAutoresizingMaskIntoConstraints = false
         container.layer.cornerRadius = 16
@@ -178,25 +173,13 @@ extension InsightDetailViewController {
             stack.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -12)
         ])
 
-        // Header
-        let header = UIStackView()
-        header.axis = .horizontal
-        header.alignment = .center
-        header.spacing = 8
-        header.translatesAutoresizingMaskIntoConstraints = false
-        stack.addArrangedSubview(header)
-
-        let label = UILabel()
-        label.text = title
-        label.font = .systemFont(ofSize: 17, weight: .regular)
-        header.addArrangedSubview(label)
-
+        // Add Button aligned left
         let addBtn = UIButton(type: .system)
-        addBtn.setTitle("Add", for: .normal)
-        addBtn.addTarget(self, action: addAction, for: .touchUpInside)
-        header.addArrangedSubview(addBtn)
-
-        header.addArrangedSubview(UIView()) // spacer
+        addBtn.setTitle(addButtonTitle, for: .normal)
+        addBtn.setTitleColor(.systemBlue, for: .normal)
+        addBtn.contentHorizontalAlignment = .leading
+        addBtn.addTarget(self, action: #selector(addMediaTapped), for: .touchUpInside)
+        stack.addArrangedSubview(addBtn)
 
         // Items
         for (idx, item) in items.enumerated() {
@@ -233,7 +216,7 @@ extension InsightDetailViewController {
             }
 
             let name = UILabel()
-            name.text = (item.fileName)
+            name.text = item.fileName
             name.font = .systemFont(ofSize: 17)
             row.addArrangedSubview(name)
             row.addArrangedSubview(UIView())
@@ -248,38 +231,20 @@ extension InsightDetailViewController {
 // MARK: - Actions & Delegates
 extension InsightDetailViewController {
     @objc private func editTapped() {
-//        let modal = ModalAddInsightViewController(insight: insight)
-//        modal.modalPresentationStyle = .automatic
-//        modal.onDone = { [weak self] updated in
-//            self?.insight = updated
-//            self?.configureContent()
-//        }
-//        present(modal, animated: true)
         print("Edit Button Tapped")
     }
 
     @objc private func analyseTapped() {
-//        let aiVC = InsightAIAnalysisViewController(insight: insight)
-//        navigationController?.pushViewController(aiVC, animated: true)
         print("Analyse Button Tapped")
     }
 
-    @objc private func addImageTapped() {
-        let picker = UIImagePickerController()
-        picker.delegate = self
-        picker.sourceType = .photoLibrary
-        present(picker, animated: true)
+    @objc private func addMediaTapped() {
+        // Implement context-based add (image/audio)
     }
 
     @objc private func removeImageTapped(_ sender: UIButton) {
         selectedImages.remove(at: sender.tag)
         configureContent()
-    }
-
-    @objc private func addAudioTapped() {
-        let picker = UIDocumentPickerViewController(forOpeningContentTypes: [.audio])
-        picker.delegate = self
-        present(picker, animated: true)
     }
 
     @objc private func removeAudioTapped(_ sender: UIButton) {
@@ -312,10 +277,11 @@ extension InsightDetailViewController: UIDocumentPickerDelegate {
 // MARK: - PropertiesSelectorDelegate
 extension InsightDetailViewController: PropertiesSelectorDelegate {
     func propertiesSelector(_ selector: PropertiesSelector, didSelectItemAt indexPath: IndexPath) {
-        let selectedTitle = selector.tableView.cellForRow(at: indexPath) as? SelectorCell
-        if indexPath.row == 0, let newTitle = selectedTitle?.btnCategory.configuration?.title,
-           let newPriority = Category(rawValue: newTitle) {
-            insight.priority = newPriority
+        if indexPath.row == 0,
+           let cell = selector.tableView.cellForRow(at: indexPath) as? SelectorCell,
+           let new = cell.btnCategory.configuration?.title,
+           let priority = Category(rawValue: new) {
+            insight.priority = priority
             InsightPersistence.updateInsight(updatedInsight: insight)
             NotificationCenter.default.post(name: .init("InsightsDidChange"), object: nil)
             configureContent()
