@@ -162,9 +162,63 @@ class CategoryViewController: UIViewController {
     }
 
     @objc private func handleFilter() {
-        print("Filter pressed")
-        // TODO
+        let alert = UIAlertController(title: "Sort Insights", message: nil, preferredStyle: .actionSheet)
+
+        let options: [(title: String, action: () -> Void)] = [
+            ("None", {
+                self.filteredInsights = self.insights
+            }),
+            ("Latest First", {
+                self.filteredInsights = self.insights.sorted(by: { $0 > $1 })
+            }),
+            ("Oldest First", {
+                self.filteredInsights = self.insights.sorted(by: { $0 < $1 })
+            }),
+            ("High Priority", {
+                let all = InsightPersistence.getAll().insights
+                let sorted = all.sorted {
+                    $0.priority.sortOrder < $1.priority.sortOrder
+                }
+                self.filteredInsights = sorted.map { $0.title }
+            }),
+            ("Low Effort", {
+                let all = InsightPersistence.getAll().insights
+                let sorted = all.sorted {
+                    $0.executionEffort.sortOrder < $1.executionEffort.sortOrder
+                }
+                self.filteredInsights = sorted.map { $0.title }
+            }),
+            ("Biggest Budget", {
+                let all = InsightPersistence.getAll().insights
+                let sorted = all.sorted {
+                    $0.bugdet.sortOrder > $1.bugdet.sortOrder
+                }
+                self.filteredInsights = sorted.map { $0.title }
+            }),
+            ("Lowest Budget", {
+                let all = InsightPersistence.getAll().insights
+                let sorted = all.sorted {
+                    $0.bugdet.sortOrder < $1.bugdet.sortOrder
+                }
+                self.filteredInsights = sorted.map { $0.title }
+            })
+        ]
+
+        for (title, action) in options {
+            alert.addAction(UIAlertAction(title: title, style: .default, handler: { _ in
+                action()
+                self.insightsTableView.reloadData()
+                self.updateEmptyStateVisibility()
+                self.updateTableViewHeight()
+            }))
+        }
+
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        present(alert, animated: true)
     }
+
+
+
 
     private func updateEmptyStateVisibility() {
         let isEmpty = filteredInsights.isEmpty

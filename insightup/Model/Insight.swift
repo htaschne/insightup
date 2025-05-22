@@ -97,3 +97,37 @@ struct PropertyItem {
     let options: [String]
     var selectedOptionIndex: Int? = nil
 }
+
+extension Category {
+    var sortOrder: Int {
+        switch self {
+        case .High: return 0
+        case .Medium: return 1
+        case .Low: return 2
+        case .None: return 3
+        }
+    }
+}
+
+extension Budget {
+    var sortOrder: Int {
+        switch self {
+        case .LessThan100: return 0
+        case .Between100And500: return 1
+        case .Between500And1000: return 2
+        case .MoreThan1000: return 3
+        }
+    }
+}
+
+extension Effort {
+    var sortOrder: Int {
+        switch self {
+        case .Solo: return 0
+        case .With1: return 1
+        case .With2to4: return 2
+        case .CrossTeam: return 3
+        case .ExternalHelp: return 4
+        }
+    }
+}
