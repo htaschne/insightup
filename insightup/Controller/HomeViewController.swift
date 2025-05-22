@@ -61,6 +61,12 @@ class HomeViewController: UIViewController {
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
+        
+        homeView.ideasButton.updateCounter()
+        homeView.problemsButton.updateCounter()
+        homeView.feelingsButton.updateCounter()
+        homeView.observationsButton.updateCounter()
+        homeView.allButton.updateCounter()
     }
     
     override func viewDidLoad() {
@@ -109,6 +115,7 @@ class HomeViewController: UIViewController {
             self.homeView.observationsButton.updateCounter()
             self.homeView.allButton.updateCounter()
         }
+        
         present(modalVC, animated: true)
 
     }

@@ -174,8 +174,7 @@ class CategoryViewController: UIViewController {
 
     private func updateTableViewHeight() {
         insightsTableView.layoutIfNeeded()
-        tableViewHeightConstraint?.constant =
-            insightsTableView.contentSize.height
+        tableViewHeightConstraint?.constant = insightsTableView.contentSize.height
     }
 }
 
