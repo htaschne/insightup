@@ -360,9 +360,9 @@ extension HomeScreenView: ViewCodeProtocol {
 //            ),
 
             addInsightButton.heightAnchor.constraint(equalToConstant: 50),
-            addInsightButton.topAnchor.constraint(
-                equalTo: highPriorityTableView.bottomAnchor,
-                constant: 16
+            addInsightButton.bottomAnchor.constraint(
+                equalTo: bottomAnchor,
+                constant: -78
             ),
             addInsightButton.leadingAnchor.constraint(
                 equalTo: leadingAnchor,
