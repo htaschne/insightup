@@ -11,9 +11,12 @@ import UIKit
 
 class HomeViewController: UIViewController, UISearchBarDelegate {
 
+    // MARK: - Properties
     private var insights: [Insight] = []
     private var filteredInsights: [Insight] = []
+    private var homeView: HomeScreenView?
     
+    // MARK: - UI Components
     private lazy var buttonProfile: UIBarButtonItem = {
         UIBarButtonItem(
             image: UIImage(systemName: "person.circle.fill"),
@@ -33,29 +36,15 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
         return searchController
     }()
 
-    @objc private func dismissKeyboard() {
-        view.endEditing(true)
-    }
-
-    lazy var homeView: HomeScreenView = {
-        guard let navigationController else { fatalError("Navigation controller not set") }
-        let homeView = HomeScreenView(navigationController: navigationController)
-        homeView.translatesAutoresizingMaskIntoConstraints = false
-        homeView.isHidden = false
-        homeView.backgroundColor = UIColor(named: "BackgroundsPrimary")
-        return homeView
-    }()
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        navigationController?.navigationBar.prefersLargeTitles = true
-        navigationItem.searchController = searchController
-        navigationItem.hidesSearchBarWhenScrolling = false
-    }
-    
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        setupUI()
+        setupData()
+        setupNotifications()
+    }
+    
+    private func setupUI() {
         let tapGesture = UITapGestureRecognizer(
             target: self,
             action: #selector(dismissKeyboard)
@@ -64,18 +53,52 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
         view.addGestureRecognizer(tapGesture)
 
         view.backgroundColor = UIColor(named: "BackgroundsPrimary")
-
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.title = "InsightUp"
         navigationItem.searchController = searchController
         navigationItem.rightBarButtonItem = buttonProfile
-
+        
+        setupHomeView()
+    }
+    
+    private func setupHomeView() {
+        guard let navigationController = navigationController else {
+            assertionFailure("HomeViewController must be embedded in a UINavigationController")
+            return
+        }
+        
+        let homeView = HomeScreenView(navigationController: navigationController)
+        homeView.translatesAutoresizingMaskIntoConstraints = false
+        homeView.backgroundColor = UIColor(named: "BackgroundsPrimary")
+        self.homeView = homeView
+        
+        view.addSubview(homeView)
+        NSLayoutConstraint.activate([
+            homeView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            homeView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            homeView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            homeView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+    }
+    
+    private func setupData() {
         insights = InsightPersistence.getAll().insights
         filteredInsights = insights
+        homeView?.reloadData(with: filteredInsights)
+    }
+    
+    private func setupNotifications() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(updateCategoryCounters),
+            name: NSNotification.Name("InsightsDidChange"),
+            object: nil
+        )
+    }
 
-        setup()
-        searchController.delegate = self
-        NotificationCenter.default.addObserver(self, selector: #selector(updateCategoryCounters), name: NSNotification.Name("InsightsDidChange"), object: nil)
+    // MARK: - Actions
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
     }
     
     @objc func modalButtonTapped() {
@@ -86,7 +109,7 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
             guard let self = self else { return }
             self.insights = InsightPersistence.getAll().insights
             self.filteredInsights = self.insights
-            self.homeView.updateCategoryCounters()
+            self.homeView?.reloadData(with: self.filteredInsights)
         }
         present(modalVC, animated: true)
     }
@@ -97,43 +120,11 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
     }
 
     @objc func updateCategoryCounters() {
-        homeView.updateCategoryCounters()
-    }
-
-    // override func viewDidAppear(_ animated: Bool) {
-    //     super.viewDidAppear(animated)
-    //     // MOCK: Apresenta a tela de detalhes de um Insight para teste visual
-    //     let mockInsight = Insight(
-    //         title: "Polls in stories get the most replies",
-    //         notes: "Interactive content significantly boosts user engagement compared to traditional static posts. It encourages participation and fosters a deeper connection with the audience, making the experience more dynamic and enjoyable.",
-    //         category: .Observations,
-    //         priority: Category.Low,
-    //         audience: TargetAudience.B2B,
-    //         executionEffort: Effort.Solo,
-    //         budget: Budget.LessThan100
-    //     )
-    //     let detailVC = InsightDetailViewController(insight: mockInsight)
-    //     let nav = UINavigationController(rootViewController: detailVC)
-    //     nav.modalPresentationStyle = UIModalPresentationStyle.fullScreen
-    //     self.present(nav, animated: true)
-    // }
-}
-
-extension HomeViewController: ViewCodeProtocol {
-    func addSubviews() {
-        view.addSubview(homeView)
-    }
-
-    func addConstraints() {
-        NSLayoutConstraint.activate([
-            homeView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            homeView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            homeView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            homeView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
+        homeView?.updateCategoryCounters()
     }
 }
 
+// MARK: - UISearchResultsUpdating
 extension HomeViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         guard let searchText = searchController.searchBar.text?.lowercased() else { return }
@@ -146,19 +137,25 @@ extension HomeViewController: UISearchResultsUpdating {
                 insight.notes.lowercased().contains(searchText)
             }
         }
+        
+        homeView?.reloadData(with: filteredInsights)
     }
 }
 
+// MARK: - UISearchControllerDelegate
 extension HomeViewController: UISearchControllerDelegate {
     func willPresentSearchController(_ searchController: UISearchController) {
         UIView.setAnimationsEnabled(false)
     }
+    
     func didPresentSearchController(_ searchController: UISearchController) {
         UIView.setAnimationsEnabled(true)
     }
+    
     func willDismissSearchController(_ searchController: UISearchController) {
         UIView.setAnimationsEnabled(false)
     }
+    
     func didDismissSearchController(_ searchController: UISearchController) {
         UIView.setAnimationsEnabled(true)
     }

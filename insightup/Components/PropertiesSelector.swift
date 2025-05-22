@@ -10,11 +10,12 @@ import UIKit
 
 protocol PropertiesSelectorDelegate: AnyObject {
     func propertiesSelector(_ selector: PropertiesSelector, didSelectItemAt indexPath: IndexPath)
+    func propertiesSelector(_ selector: PropertiesSelector, didSelectValue value: String, forProperty property: String)
 }
 
-class PropertiesSelector: UIView {
+public class PropertiesSelector: UIView {
     
-    private var items: [PropertyItem] = []
+    public private(set) var propertyItems: [PropertyItem] = []
     weak var delegate: PropertiesSelectorDelegate?
 
     lazy var tableView: UITableView = {
@@ -45,8 +46,8 @@ class PropertiesSelector: UIView {
         addConstraints()
     }
 
-    func configure(with items: [PropertyItem]) {
-        self.items = items
+    public func configure(with items: [PropertyItem]) {
+        self.propertyItems = items
         self.layer.cornerRadius = 12
         tableView.reloadData()
         let totalHeight = CGFloat(items.count) * tableView.rowHeight
@@ -54,8 +55,8 @@ class PropertiesSelector: UIView {
     }
     
     func getValue(for title: String) -> String? {
-        for i in 0..<items.count {
-            if items[i].title == title,
+        for i in 0..<propertyItems.count {
+            if propertyItems[i].title == title,
                let cell = tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SelectorCell {
                 return cell.btnCategory.configuration?.title
             }
@@ -64,12 +65,16 @@ class PropertiesSelector: UIView {
     }
 
     func setSelectedValue(_ value: String, for title: String) {
-        for i in 0..<items.count {
-            if items[i].title == title,
-               let cell = tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SelectorCell {
-                var config = cell.btnCategory.configuration ?? UIButton.Configuration.plain()
-                config.title = value
-                cell.btnCategory.configuration = config
+        for i in 0..<propertyItems.count {
+            if propertyItems[i].title == title {
+                if let cell = tableView.cellForRow(at: IndexPath(row: i, section: 0)) as? SelectorCell {
+                    var config = cell.btnCategory.configuration ?? UIButton.Configuration.plain()
+                    config.title = value
+                    cell.btnCategory.configuration = config
+                }
+                // Notificar o delegate sobre a mudança de valor
+                (delegate as? UIViewController)?.view.endEditing(true)
+                delegate?.propertiesSelector(self, didSelectValue: value, forProperty: title)
             }
         }
     }
@@ -77,20 +82,20 @@ class PropertiesSelector: UIView {
 }
 
 extension PropertiesSelector: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return items.count
+    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return propertyItems.count
     }
 
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(
             withIdentifier: SelectorCell.reuseIdentifier,
             for: indexPath
         ) as? SelectorCell else {
             return UITableViewCell()
         }
-        let item = items[indexPath.row]
+        let item = propertyItems[indexPath.row]
         cell.configure(title: item.title, iconName: item.iconName, options: item.options)
-        if indexPath.row < items.count - 1 {
+        if indexPath.row < propertyItems.count - 1 {
             if cell.contentView.viewWithTag(999) == nil {
                 let divider = UIView()
                 divider.backgroundColor = .graysGray6
@@ -112,7 +117,7 @@ extension PropertiesSelector: UITableViewDataSource {
 }
 
 extension PropertiesSelector: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         delegate?.propertiesSelector(self, didSelectItemAt: indexPath)
     }
 }

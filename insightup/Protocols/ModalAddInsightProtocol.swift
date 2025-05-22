@@ -6,5 +6,6 @@
 //
 
 protocol ModalAddInsightDelegate: AnyObject {
-    func didAddInsight()
+    func didAddInsight(_ insight: Insight)
+    func didUpdateInsight(_ insight: Insight)
 }

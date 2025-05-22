@@ -10,8 +10,8 @@ import UIKit
 class HomeScreenView: UIView {
 
     private var topInsights: [Insight] = []
-
-    var navigationController: UINavigationController?
+    private var filteredInsights: [Insight] = []
+    weak var navigationController: UINavigationController?
 
     private func loadTopInsights() {
         let allInsights = InsightPersistence.getAll().insights
@@ -41,7 +41,7 @@ class HomeScreenView: UIView {
     }
 
     @objc func handleIdeasButton() {
-        let vc = CategoryViewController(category: .Ideas)
+        let vc = CategoryViewController(category: InsightCategory.Ideas)
         guard let navigationController else {
             fatalError("Could not unwrap navigationController")
         }
@@ -49,7 +49,7 @@ class HomeScreenView: UIView {
     }
 
     lazy var ideasButton: CardCategoryComponent = {
-        let card = CardCategoryComponent(category: .Ideas)
+        let card = CardCategoryComponent(category: InsightCategory.Ideas)
         card.translatesAutoresizingMaskIntoConstraints = false
         let tap = UITapGestureRecognizer(
             target: self,
@@ -60,7 +60,7 @@ class HomeScreenView: UIView {
     }()
 
     @objc func handleProblemsButton() {
-        let vc = CategoryViewController(category: .Problems)
+        let vc = CategoryViewController(category: InsightCategory.Problems)
         guard let navigationController else {
             fatalError("Could not unwrap navigationController")
         }
@@ -68,7 +68,7 @@ class HomeScreenView: UIView {
     }
 
     lazy var problemsButton: CardCategoryComponent = {
-        var card = CardCategoryComponent(category: .Problems)
+        var card = CardCategoryComponent(category: InsightCategory.Problems)
         card.translatesAutoresizingMaskIntoConstraints = false
         let tap = UITapGestureRecognizer(
             target: self,
@@ -79,7 +79,7 @@ class HomeScreenView: UIView {
     }()
 
     @objc func handleFeelingsButton() {
-        let vc = CategoryViewController(category: .Feelings)
+        let vc = CategoryViewController(category: InsightCategory.Feelings)
         guard let navigationController else {
             fatalError("Could not unwrap navigationController")
         }
@@ -87,7 +87,7 @@ class HomeScreenView: UIView {
     }
 
     lazy var feelingsButton: CardCategoryComponent = {
-        var card = CardCategoryComponent(category: .Feelings)
+        var card = CardCategoryComponent(category: InsightCategory.Feelings)
         card.translatesAutoresizingMaskIntoConstraints = false
         let tap = UITapGestureRecognizer(
             target: self,
@@ -98,7 +98,7 @@ class HomeScreenView: UIView {
     }()
 
     @objc func handleObservationButton() {
-        let vc = CategoryViewController(category: .Observations)
+        let vc = CategoryViewController(category: InsightCategory.Observations)
         guard let navigationController else {
             fatalError("Could not unwrap navigationController")
         }
@@ -106,7 +106,7 @@ class HomeScreenView: UIView {
     }
 
     lazy var observationsButton: CardCategoryComponent = {
-        var card = CardCategoryComponent(category: .Observations)
+        var card = CardCategoryComponent(category: InsightCategory.Observations)
         let tap = UITapGestureRecognizer(
             target: self,
             action: #selector(handleObservationButton)
@@ -117,7 +117,7 @@ class HomeScreenView: UIView {
     }()
 
     @objc func handleAllButton() {
-        let vc = CategoryViewController(category: .All)
+        let vc = CategoryViewController(category: InsightCategory.All)
         guard let navigationController else {
             fatalError("Could not unwrap navigationController")
         }
@@ -125,7 +125,7 @@ class HomeScreenView: UIView {
     }
 
     lazy var allButton: CardCategoryComponent = {
-        var card = CardCategoryComponent(category: .All)
+        var card = CardCategoryComponent(category: InsightCategory.All)
         card.translatesAutoresizingMaskIntoConstraints = false
         let tap = UITapGestureRecognizer(
             target: self,
@@ -280,12 +280,40 @@ class HomeScreenView: UIView {
         ])
     }
 
+    func reloadData(with insights: [Insight]) {
+        filteredInsights = insights
+        updateTopInsights()
+        updateCategoryCounters()
+        highPriorityTableView.reloadData()
+    }
+    
+    private func updateTopInsights() {
+        let priorityOrder: [Category] = [.High, .Medium, .Low, .None]
+        let sortedInsights = filteredInsights.sorted {
+            guard let firstIndex = priorityOrder.firstIndex(of: $0.priority),
+                  let secondIndex = priorityOrder.firstIndex(of: $1.priority)
+            else {
+                return false
+            }
+            return firstIndex < secondIndex
+        }
+        
+        topInsights = Array(sortedInsights.prefix(3))
+        highPriorityTableView.isHidden = topInsights.isEmpty
+        priorityLabel.isHidden = topInsights.isEmpty
+    }
+
     public func updateCategoryCounters() {
+        // Update counters regardless of view visibility
         ideasButton.updateCounter()
         problemsButton.updateCounter()
         feelingsButton.updateCounter()
         observationsButton.updateCounter()
         allButton.updateCounter()
+        
+        // Update high priority section
+        updateTopInsights()
+        highPriorityTableView.reloadData()
     }
 
 }

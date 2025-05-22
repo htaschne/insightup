@@ -9,71 +9,82 @@ import UIKit
 
 class InsightCell: UITableViewCell {
 
-    static let reuseIdentifier = "InsightCell"
+    public static let reuseIdentifier = "InsightCell"
 
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 16)
-        label.numberOfLines = 1
         label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = .systemFont(ofSize: 17)
+        label.textColor = .label
         return label
     }()
 
-    private let chevronImageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage(systemName: "chevron.right"))
-        imageView.tintColor = .gray
+    private let priorityIcon: UIImageView = {
+        let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.contentMode = .scaleAspectFit
+        imageView.tintColor = .systemRed
         return imageView
     }()
 
-    private let separator: UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor.systemGray4
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
+    private let dateLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = .systemFont(ofSize: 12)
+        label.textColor = .secondaryLabel
+        return label
     }()
-
-    var isLastCell: Bool = false {
-        didSet {
-            separator.isHidden = isLastCell
-        }
-    }
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        backgroundColor = .clear
-        contentView.backgroundColor = .white
-        selectionStyle = .none
-        setup()
+        setupViews()
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func setup() {
+    private func setupViews() {
+        contentView.addSubview(priorityIcon)
         contentView.addSubview(titleLabel)
-        contentView.addSubview(chevronImageView)
-        contentView.addSubview(separator)
-
+        contentView.addSubview(dateLabel)
+        
         NSLayoutConstraint.activate([
-            titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            titleLabel.trailingAnchor.constraint(equalTo: chevronImageView.leadingAnchor, constant: -8),
+            priorityIcon.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            priorityIcon.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            priorityIcon.widthAnchor.constraint(equalToConstant: 20),
+            priorityIcon.heightAnchor.constraint(equalToConstant: 20),
+            
+            titleLabel.leadingAnchor.constraint(equalTo: priorityIcon.trailingAnchor, constant: 12),
+            titleLabel.trailingAnchor.constraint(equalTo: dateLabel.leadingAnchor, constant: -8),
             titleLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-
-            chevronImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            chevronImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            chevronImageView.widthAnchor.constraint(equalToConstant: 12),
-
-            separator.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
-            separator.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            separator.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            separator.heightAnchor.constraint(equalToConstant: 1)
+            
+            dateLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            dateLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            dateLabel.widthAnchor.constraint(equalToConstant: 80)
         ])
     }
 
-    func configure(with title: String, isLast: Bool) {
-        titleLabel.text = title
-        isLastCell = isLast
+    func configure(with insight: Insight) {
+        titleLabel.text = insight.title
+        
+        // Configure priority icon
+        let priorityImage: String
+        switch insight.priority {
+        case .High:
+            priorityImage = "exclamationmark.triangle.fill"
+        case .Medium:
+            priorityImage = "exclamationmark.circle.fill"
+        case .Low:
+            priorityImage = "exclamationmark.circle"
+        case .None:
+            priorityImage = "circle"
+        }
+        priorityIcon.image = UIImage(systemName: priorityImage)
+        
+        // Configure date
+        let formatter = DateFormatter()
+        formatter.dateStyle = .short
+        dateLabel.text = formatter.string(from: insight.createdAt)
     }
 }

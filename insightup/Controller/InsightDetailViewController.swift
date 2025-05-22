@@ -136,6 +136,11 @@ class InsightDetailViewController: UIViewController, UIImagePickerControllerDele
         propertiesSelector.delegate = self
         contentStack.addArrangedSubview(propertiesSelector)
         propertiesSelector.heightAnchor.constraint(equalToConstant: 207).isActive = true
+        // Garantir que os filtros mostrem o valor correto
+        propertiesSelector.setSelectedValue(insight.priority.rawValue, for: "Priority")
+        propertiesSelector.setSelectedValue(insight.audience.rawValue, for: "Audience")
+        propertiesSelector.setSelectedValue(insight.executionEffort.rawValue, for: "Execution Effort")
+        propertiesSelector.setSelectedValue(insight.budget.rawValue, for: "Budget")
 
         // Seção de imagens como card
         let imageSection = UIView()
@@ -271,20 +276,38 @@ class InsightDetailViewController: UIViewController, UIImagePickerControllerDele
 
     // MARK: PropertiesSelectorDelegate
     func propertiesSelector(_ selector: PropertiesSelector, didSelectItemAt indexPath: IndexPath) {
-        // Priority é o primeiro filtro
-        if indexPath.row == 0 {
-            let selected = selector.tableView.cellForRow(at: indexPath) as? SelectorCell
-            let newPriority = selected?.btnCategory.configuration?.title ?? "Low"
-            if let newCategory = Category(rawValue: newPriority) {
+        let selected = selector.tableView.cellForRow(at: indexPath) as? SelectorCell
+        let newValue = selected?.btnCategory.configuration?.title ?? "None"
+        switch indexPath.row {
+        case 0: // Priority
+            if let newCategory = Category(rawValue: newValue) {
                 insight.priority = newCategory
-                // Salvar alteração na persistência
-                InsightPersistence.updateInsight(updatedInsight: insight)
-                // Notificar Home para atualizar os cards
-                NotificationCenter.default.post(name: NSNotification.Name("InsightsDidChange"), object: nil)
-                // Atualizar UI
-                setupContent()
             }
+        case 1: // Audience
+            if let newAudience = TargetAudience(rawValue: newValue) {
+                insight.audience = newAudience
+            }
+        case 2: // Execution Effort
+            if let newEffort = Effort(rawValue: newValue) {
+                insight.executionEffort = newEffort
+            }
+        case 3: // Budget
+            if let newBudget = Budget(rawValue: newValue) {
+                insight.budget = newBudget
+            }
+        default:
+            break
         }
+        // Salvar alteração na persistência
+        InsightPersistence.updateInsight(updatedInsight: insight)
+        // Notificar Home para atualizar os cards
+        NotificationCenter.default.post(name: NSNotification.Name("InsightsDidChange"), object: nil)
+        // Atualizar UI
+        setupContent()
+    }
+
+    func propertiesSelector(_ selector: PropertiesSelector, didSelectValue value: String, forProperty property: String) {
+        // Implementação do método
     }
 
     enum MediaItem {

@@ -48,18 +48,29 @@ public enum Effort: String, Codable, CaseIterable {
 
 
 
-public struct Insight: Codable {
+public struct Insight: Codable, Identifiable {
     public var id: UUID = UUID()
     public var title: String
     public var notes: String
     public var category: InsightCategory
     public var priority: Category
     public var audience: TargetAudience
-//    var impact: Category
     public var executionEffort: Effort
     public var budget: Budget
+    public var createdAt: Date
+    public var updatedAt: Date
     
-    public init(title: String, notes: String, category: InsightCategory, priority: Category, audience: TargetAudience, executionEffort: Effort, budget: Budget) {
+    public init(id: UUID = UUID(), 
+                title: String, 
+                notes: String, 
+                category: InsightCategory, 
+                priority: Category, 
+                audience: TargetAudience, 
+                executionEffort: Effort, 
+                budget: Budget,
+                createdAt: Date = Date(),
+                updatedAt: Date = Date()) {
+        self.id = id
         self.title = title
         self.notes = notes
         self.category = category
@@ -67,6 +78,8 @@ public struct Insight: Codable {
         self.audience = audience
         self.executionEffort = executionEffort
         self.budget = budget
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
     }
 }
 
