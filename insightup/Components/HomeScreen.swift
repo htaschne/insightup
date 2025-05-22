@@ -9,6 +9,8 @@ import UIKit
 
 class HomeScreenView: UIView {
 
+    var tableViewHightConstraint: NSLayoutConstraint!
+    
     private var topInsights: [Insight] = []
     var navigationController: UINavigationController?
 
@@ -30,6 +32,7 @@ class HomeScreenView: UIView {
         highPriorityTableView.isHidden = topInsights.isEmpty
         priorityLabel.isHidden = topInsights.isEmpty
         highPriorityTableView.reloadData()
+        updateTableViewHeight()
         setup()
     }
     
@@ -215,6 +218,14 @@ class HomeScreenView: UIView {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
+    
+    func updateTableViewHeight() {
+        let rowHeight: CGFloat = 44
+        let numberRows = min(topInsights.count, 3)
+        tableViewHightConstraint.constant = rowHeight * CGFloat(numberRows)
+        tableViewHightConstraint.constant -= 1
+        highPriorityTableView.layoutIfNeeded()
+    }
 
     lazy var highPriorityTableView: UITableView = {
         let tableView = UITableView()
@@ -230,6 +241,10 @@ class HomeScreenView: UIView {
         tableView.layer.cornerRadius = 12
         tableView.clipsToBounds = true
         tableView.backgroundColor = UIColor(named: "Backgroundsecondary")
+        
+        tableViewHightConstraint = tableView.heightAnchor.constraint(equalToConstant: 0)
+        tableViewHightConstraint.isActive = true
+        
         return tableView
     }()
 
@@ -340,9 +355,9 @@ extension HomeScreenView: ViewCodeProtocol {
                 equalTo: trailingAnchor,
                 constant: -16
             ),
-            highPriorityTableView.heightAnchor.constraint(
-                equalToConstant: (44 * 3 - 1)
-            ),
+//            highPriorityTableView.heightAnchor.constraint(
+//                equalToConstant: (44 * 3 - 1)
+//            ),
 
             addInsightButton.heightAnchor.constraint(equalToConstant: 50),
             addInsightButton.topAnchor.constraint(
@@ -426,6 +441,7 @@ extension HomeScreenView: UITableViewDelegate {
             tableView.deleteRows(at: [indexPath], with: .automatic)
 
             self.loadTopInsights()
+            self.updateTableViewHeight()
             completionHandler(true)
             updateCategoryCounts()
         }
