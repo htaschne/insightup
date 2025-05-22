@@ -15,6 +15,7 @@ protocol PropertiesSelectorDelegate: AnyObject {
 class PropertiesSelector: UIView {
     
     private var items: [PropertyItem] = []
+    private var editable: Bool = true
     
     weak var delegate: PropertiesSelectorDelegate?
 
@@ -39,7 +40,8 @@ class PropertiesSelector: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func configure(with items: [PropertyItem]) {
+    func configure(with items: [PropertyItem], editable: Bool) {
+        self.editable = editable
         self.items = items
         self.layer.cornerRadius = 12
 
@@ -76,7 +78,7 @@ extension PropertiesSelector: UITableViewDataSource {
         }
 
         let item = items[indexPath.row]
-        cell.configure(with: item)
+        cell.configure(with: item, editable: editable)
         cell.delegate = self
         return cell
     }

@@ -93,9 +93,10 @@ class SelectorCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func configure(with item: PropertyItem) {
+    func configure(with item: PropertyItem, editable: Bool) {
         currentItem = item
         lblCategory.text = item.title
+        btnCategory.isUserInteractionEnabled = editable
         iconImageView.image = UIImage(
             systemName: item.iconName,
             withConfiguration: UIImage.SymbolConfiguration(pointSize: 24, weight: .regular)

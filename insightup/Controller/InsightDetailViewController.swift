@@ -131,7 +131,7 @@ extension InsightDetailViewController {
 
         // Properties Selector
         let filterItems = makeFilterItems()
-        propertiesSelector.configure(with: filterItems)
+        propertiesSelector.configure(with: filterItems, editable: false)
         contentStack.addArrangedSubview(propertiesSelector)
         propertiesSelector.heightAnchor.constraint(equalToConstant: 207).isActive = true
 

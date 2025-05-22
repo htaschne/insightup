@@ -130,7 +130,7 @@ class ProfileViewController: UIViewController {
                     selectedOptions: onboardingData.mainGoals.map { $0.description },
                     multipleSelection: true
                 )
-        ])
+        ], editable: true)
         return component
     }()
 

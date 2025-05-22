@@ -36,7 +36,7 @@ enum Category: String, Codable, CaseIterable {
 }
 
 enum TargetAudience: String, Codable, CaseIterable {
-    case B2B, B2C, B2B2C, B2E, B2G, C2C, D2D
+    case B2B, B2C, B2B2C, B2E, B2G, C2C, D2D, None
 }
 
 enum Budget: String, Codable, CaseIterable {
@@ -55,6 +55,7 @@ enum Effort: String, Codable, CaseIterable {
     case With2to4 = "2–4 people"
     case CrossTeam = "Cross-team +4"
     case ExternalHelp = "External help"
+    case None = "None"
 
     var description: String { rawValue }
 }
@@ -64,12 +65,12 @@ struct Insight: Codable, Equatable {
     var id: UUID = UUID()
     var title: String
     var notes: String
-    var category: InsightCategory
-    var priority: Category
-    var audience: TargetAudience
+    var category: InsightCategory = .All
+    var priority: Category = .None
+    var audience: TargetAudience = .None
 //    var impact: Category
-    var executionEffort: Effort
-    var bugdet: Budget
+    var executionEffort: Effort = .None
+    var bugdet: Budget = .LessThan100
 }
 
 struct Insights: Codable {
@@ -115,6 +116,7 @@ extension Effort {
         case .With2to4: return 2
         case .CrossTeam: return 3
         case .ExternalHelp: return 4
+        case .None: return 5
         }
     }
 
