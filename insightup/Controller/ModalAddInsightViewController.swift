@@ -187,10 +187,49 @@ class ModalAddInsightViewController: UIViewController {
 
         let notes = notesTextView.text ?? ""
 
+        var selectedCategory: InsightCategory = .All
+        if let selectedCategoryString = componentCategory.getValue(
+            for: "Category"
+        ), let sc = InsightCategory(rawValue: selectedCategoryString) {
+            selectedCategory = sc
+        }
+
+        var priority: Category = .None
+        if let priorityString = componentDetails.getValue(for: "Priority"),
+            let p = Category(rawValue: priorityString)
+        {
+            priority = p
+        }
+
+        var audience: TargetAudience = .None
+        if let audienceString = componentDetails.getValue(for: "Audience"),
+            let a = TargetAudience(rawValue: audienceString)
+        {
+            audience = a
+        }
+
+        var effort: Effort = .None
+        if let effortString = componentDetails.getValue(
+            for: "Execution Effort"
+        ), let e = Effort(rawValue: effortString) {
+            effort = e
+        }
+
+        var budget: Budget = .LessThan100
+        if let budgetString = componentDetails.getValue(for: "Budget"),
+            let b = Budget(rawValue: budgetString)
+        {
+            budget = b
+        }
+
         let newInsight = Insight(
             title: title,
-            notes: notes
-            // All other properties will use default values defined in Insight
+            notes: notes,
+            category: selectedCategory,
+            priority: priority,
+            audience: audience,
+            executionEffort: effort,
+            bugdet: budget,
         )
 
         InsightPersistence.saveInsight(newInsight: newInsight)
@@ -198,7 +237,9 @@ class ModalAddInsightViewController: UIViewController {
         let allInsights = InsightPersistence.getAll().insights
         print("📋 Todos os insights salvos:")
         for (index, insight) in allInsights.enumerated() {
-            print("🧠 [\(index)] \(insight.title) – Categoria: \(insight.category.rawValue)")
+            print(
+                "🧠 [\(index)] \(insight.title) – Categoria: \(insight.category.rawValue)"
+            )
         }
 
         delegate?.didAddInsight()
@@ -206,8 +247,6 @@ class ModalAddInsightViewController: UIViewController {
             self.onDone?()
         }
     }
-
-       
 
 }
 
